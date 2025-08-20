@@ -15,7 +15,7 @@ This is a **Customer Relationship Management (CRM) system** developed for **BizS
 ## 📁 Project Structure
 
 ```
-ag-solutions-bangalore-fullstock-crm/
+ag-solutions-bangalore-BizStock-crm/
 ├── public/                 # Static assets
 ├── src/                    # Source code
 │   ├── app/                # Main application logic
@@ -65,8 +65,8 @@ Follow these steps to set up the project locally:
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/AG-Solutions-Bangalore/fullstock-crm
-   cd fullstock-crm
+   git clone https://github.com/AG-Solutions-Bangalore/BizStock-crm
+   cd BizStock-crm
    ```
 
 2. **Install dependencies:**

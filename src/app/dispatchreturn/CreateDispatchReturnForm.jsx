@@ -518,6 +518,7 @@ const CreateDispatchReturnForm = () => {
                     value={formData.dispatch_date}
                     onChange={(e) => handleInputChange(e, "dispatch_date")}
                     type="date"
+                    autoFocus
                   />
                 </div>
                 <div className="mb-4">
@@ -931,6 +932,7 @@ const CreateDispatchReturnForm = () => {
                         onChange={(e) => handleInputChange(e, "dispatch_date")}
                         placeholder="Enter Payment Date"
                         type="date"
+                        autoFocus
                       />
                     </div>
                   </div>

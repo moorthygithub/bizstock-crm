@@ -120,7 +120,7 @@ export default function LoginAuth() {
             transition={{ delay: 0.2 }}
           >
             <Card className="border-none shadow-none">
-              <CardHeader className="mb-4">
+              <CardHeader>
                 <div className="flex items-center space-x-3">
                   <motion.div
                     animate={{ scale: [1, 1.4, 1] }}
@@ -132,11 +132,11 @@ export default function LoginAuth() {
                   >
                     <Logo />
                   </motion.div>{" "}
-                  <span className="text-xl font-bold text-yellow-800">
+                  <span className="text-3xl font-bold text-yellow-800">
                     {companyname?.CompanyName}
                   </span>
                 </div>
-                <CardTitle className="text-3xl text-yellow-900 mt-4">
+                <CardTitle className="text-xl text-yellow-900 mt-4">
                   Forgot Password
                 </CardTitle>
               </CardHeader>
@@ -155,6 +155,7 @@ export default function LoginAuth() {
                       onChange={(e) => setUserName(e.target.value)}
                       required
                       className="mt-1 bg-white text-black"
+                      autoFocus
                     />
                   </div>
 

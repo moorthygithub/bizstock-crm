@@ -515,6 +515,7 @@ const CreatePurchase = () => {
                     value={formData.purchase_date}
                     onChange={(e) => handleInputChange(e, "purchase_date")}
                     type="date"
+                    autoFocus
                   />
                 </div>
                 <div className="mb-4">
@@ -897,6 +898,7 @@ const CreatePurchase = () => {
                         onChange={(e) => handleInputChange(e, "purchase_date")}
                         placeholder="Enter Payment Date"
                         type="date"
+                        autoFocus
                       />
                     </div>
                   </div>

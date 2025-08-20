@@ -128,10 +128,10 @@ const PaymentLedgerReport = () => {
         );
       }
       return (
-        <div ref={containerRef} className="mt-4 space-y-4 max-w-4xl mx-auto">
+        <div ref={containerRef} className="mt-4 space-y-8 max-w-4xl mx-auto">
           <div className="hidden print:block">
             <div className="flex justify-between ">
-              <h2 className="text-lg font-bold ">Ledger Report</h2>
+              <h2 className="text-lg font-bold mb-4">Ledger Report</h2>
               <div>
                 <h2 className="text-sm font-bold flex justify-center">
                   From - {moment(formData.from_date).format("DD MMM YYYY")} To -{" "}

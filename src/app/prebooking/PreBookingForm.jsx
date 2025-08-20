@@ -309,7 +309,7 @@ const PreBookingForm = () => {
     e.preventDefault();
 
     const missingFields = [];
-    if (!formData.pre_booking_date) missingFields.push("Preebooking Date");
+    if (!formData.pre_booking_date) missingFields.push("Pre Booking Date");
     if (!formData.pre_booking_buyer_id) missingFields.push("Buyer Id");
     if (!formData.pre_booking_ref_no) missingFields.push("Bill Ref No");
     if (!formData.pre_booking_status && editId) {
@@ -515,6 +515,7 @@ const PreBookingForm = () => {
                     value={formData.pre_booking_date}
                     onChange={(e) => handleInputChange(e, "pre_booking_date")}
                     type="date"
+                    autoFocus
                   />
                 </div>
                 <div className="mb-4">
@@ -914,6 +915,7 @@ const PreBookingForm = () => {
                         }
                         placeholder="Enter Payment Date"
                         type="date"
+                        autoFocus
                       />
                     </div>
                   </div>
