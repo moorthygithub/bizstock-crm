@@ -79,6 +79,30 @@ const BuyerList = () => {
       cell: ({ row }) => <div>{row.original.buyer_city}</div>,
     },
     {
+      id: "Type",
+      accessorKey: "buyer_type",
+      header: "Type",
+      cell: ({ row }) => {
+        const type = row.original.buyer_type;
+        const typeMap = {
+          1: "Buyer",
+          2: "Vendor",
+        };
+
+        const labels = Array.isArray(type)
+          ? type.map((t) => typeMap[t] || t)
+          : String(type)
+              .split(",")
+              .map((t) => typeMap[t.trim()] || t);
+
+        return (
+          <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+            {labels.join(", ")}
+          </span>
+        );
+      },
+    },
+    {
       id: "Status",
       accessorKey: "buyer_status",
       header: "Status",
@@ -200,40 +224,70 @@ const BuyerList = () => {
 
           <div className="space-y-3">
             {filteredItems.length > 0 ? (
-              filteredItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="relative bg-white rounded-lg shadow-sm border-l-4 border-r border-b border-t border-yellow-500 overflow-hidden"
-                >
-                  <div className="p-2 flex flex-col gap-2">
-                    {/* Sl No and Item Name */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="bg-gray-100 text-gray-600 rounded-full w-4 h-4 flex items-center justify-center text-xs font-medium">
-                          {index + 1}
-                        </div>
-                        <h3 className="font-medium flex flex-col text-sm text-gray-800">
-                          <span>{item.buyer_name}</span>
-                          <span className="text-xs">{item.buyer_city}</span>
-                        </h3>
-                      </div>
-                      <div className="flex items-center justify-between gap-2 ">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            item.buyer_status === "Active"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {item.buyer_status}
-                        </span>
+              filteredItems.map((item, index) => {
+                // Buyer type mapping
+                const typeMap = {
+                  1: "Buyer",
+                  2: "Vendor",
+                  3: "Distributor", // add more if needed
+                };
 
-                        <BuyerForm buyerId={item.id} />
+                // Handle multiple types (array or comma string)
+                const types = Array.isArray(item.buyer_type)
+                  ? item.buyer_type
+                  : String(item.buyer_type || "")
+                      .split(",")
+                      .map((t) => t.trim());
+
+                const typeLabels = types.map((t) => typeMap[t] || t);
+
+                return (
+                  <div
+                    key={item.id}
+                    className="relative bg-white rounded-lg shadow-sm border-l-4 border-r border-b border-t border-yellow-500 overflow-hidden"
+                  >
+                    <div className="p-2 flex flex-col gap-2">
+                      {/* Sl No and Item Name */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="bg-gray-100 text-gray-600 rounded-full w-4 h-4 flex items-center justify-center text-xs font-medium">
+                            {index + 1}
+                          </div>
+                          <h3 className="font-medium flex flex-col text-sm text-gray-800">
+                            <span>{item.buyer_name}</span>
+                            <span className="text-xs">{item.buyer_city}</span>
+                          </h3>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          {/* Buyer Type Labels */}
+                          {typeLabels.map((label, i) => (
+                            <span
+                              key={i}
+                              className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                            >
+                              {label}
+                            </span>
+                          ))}
+
+                          {/* Buyer Status */}
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              item.buyer_status === "Active"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {item.buyer_status}
+                          </span>
+
+                          <BuyerForm buyerId={item.id} />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 text-center text-gray-500">
                 No items found.

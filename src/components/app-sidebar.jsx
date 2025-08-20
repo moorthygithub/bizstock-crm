@@ -1,12 +1,15 @@
 import {
+  ArrowDown,
+  ArrowUp,
+  Box,
+  DollarSign,
   File,
   Frame,
-  GalleryVerticalEnd,
   Package,
+  ReceiptText,
   Settings2,
   ShoppingBag,
 } from "lucide-react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -20,7 +23,6 @@ import {
 import { useSelector } from "react-redux";
 import companyname from "../json/company.json";
 import { NavMainUser } from "./nav-main-user";
-
 export function AppSidebar({ ...props }) {
   const nameL = useSelector((state) => state.auth.name);
   const emailL = useSelector((state) => state.auth.email);
@@ -92,69 +94,105 @@ export function AppSidebar({ ...props }) {
             },
           ]
         : []),
+
       {
-        title: "Purchase",
-        url: "/purchase",
-        icon: ShoppingBag,
-        isActive: false,
-      },
-      {
-        title: "Purchase Return",
-        url: "/purchase-return",
-        icon: ShoppingBag,
-        isActive: false,
-      },
-      {
-        title: "PreBooking",
-        url: "/pre-booking",
-        icon: ShoppingBag,
-        isActive: false,
-      },
-      {
-        title: "Dispatch",
-        url: "/dispatch",
-        icon: ShoppingBag,
-        isActive: false,
-      },
-      {
-        title: "Dispatch Return",
-        url: "/dispatch-return",
-        icon: ShoppingBag,
-        isActive: false,
-      },
-      {
-        title: "Stock View",
-        url: "/stock-view",
-        icon: Package,
-        isActive: false,
-      },
-      {
-        title: "Report",
+        title: "Inward",
         url: "#",
         isActive: false,
-        icon: File,
+        icon: ArrowDown,
+        items: [
+          {
+            title: "Purchase",
+            url: "/purchase",
+          },
+          {
+            title: "Purchase Return",
+            url: "/purchase-return",
+          },
+        ],
+      },
+      {
+        title: "Outward",
+        url: "#",
+        isActive: false,
+        icon: ArrowUp,
+        items: [
+          {
+            title: "Quotation",
+            url: "/quotation",
+          },
+
+          {
+            title: "PreBooking",
+            url: "/pre-booking",
+          },
+          {
+            title: "Dispatch",
+            url: "/dispatch",
+          },
+          {
+            title: "Dispatch Return",
+            url: "/dispatch-return",
+          },
+          ...(id != 1
+            ? [
+                {
+                  title: "Dispatch Summary",
+                  url: "/report/dispatch",
+                },
+              ]
+            : []),
+        ],
+      },
+      {
+        title: "Billing",
+        url: "#",
+        isActive: false,
+        icon: ReceiptText,
+        items: [
+          {
+            title: "Invoice",
+            url: "/invoice",
+          },
+          {
+            title: "Payment",
+            url: "/payment",
+          },
+          {
+            title: "Payment Summary",
+            url: "/report/payment-summary",
+          },
+          {
+            title: "Ledger",
+            url: "/report/payment-ledger",
+          },
+        ],
+      },
+
+      {
+        title: "Stock",
+        url: "#",
+        isActive: false,
+        icon: Package,
 
         items: [
+          {
+            title: "Stock View",
+            url: "/stock-view",
+          },
           {
             title: "Category Stock",
             url: "/report/category-stock",
           },
           {
-            title: "Stock",
+            title: "Stock Summary",
             url: "/report/stock",
           },
           {
             title: "Godown Stock",
             url: "/report/godown-stock",
           },
-          ...(id != 1
-            ? [
-                {
-                  title: "Buyer",
-                  url: "/report/buyer",
-                },
-              ]
-            : []),
+
           {
             title: "Single Item Stock",
             url: "/report/single-item-stock",
@@ -162,8 +200,8 @@ export function AppSidebar({ ...props }) {
           ...(id != 1
             ? [
                 {
-                  title: "Dispatch",
-                  url: "/report/dispatch",
+                  title: "Buyer",
+                  url: "/report/buyer",
                 },
               ]
             : []),

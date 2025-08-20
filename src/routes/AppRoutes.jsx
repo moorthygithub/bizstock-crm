@@ -22,23 +22,31 @@ import CategoryList from "@/app/master/category/CategoryList";
 import GoDownList from "@/app/master/godown/GoDownList";
 import ItemList from "@/app/master/item/ItemList";
 import TeamList from "@/app/master/team/TeamList";
+import PaymentForm from "@/app/payment/PaymentForm";
+import PaymentList from "@/app/payment/paymentList";
+import PreBookingForm from "@/app/prebooking/PreBookingForm";
+import PreBookingList from "@/app/prebooking/PreBookingList";
+import PreBookingView from "@/app/prebooking/PreBookingView";
 import CreatePurchase from "@/app/purchase/CreatePurchase";
 import PurchaseList from "@/app/purchase/PurchaseList";
+import PurchaseView from "@/app/purchase/PurchaseView";
 import CreatePurchaseReturn from "@/app/purchasereturn/CreatePurchaseReturn";
 import PurchaseReturnList from "@/app/purchasereturn/PurchaseReturnList";
+import PurchaseReturnView from "@/app/purchasereturn/PurchaseReturnView";
+import QuotationForm from "@/app/quotation/QuotationForm";
+import QuotationList from "@/app/quotation/QuotationList";
 import BuyerReport from "@/app/report/BuyerReport";
+import CategoryStock from "@/app/report/CategoryStock/CategoryStock";
 import DispatchReport from "@/app/report/DispatchReport";
 import PurchaseReport from "@/app/report/PurchaseReport";
 import SingleItemStock from "@/app/report/SingleItemStock";
 import Stock from "@/app/report/Stock";
-import ValidationWrapper from "@/utils/ValidationWrapper";
 import StockGoDown from "@/app/report/StockGoDown";
-import CategoryStock from "@/app/report/CategoryStock/CategoryStock";
-import PurchaseView from "@/app/purchase/PurchaseView";
-import PurchaseReturnView from "@/app/purchasereturn/PurchaseReturnView";
-import PreBookingList from "@/app/prebooking/PreBookingList";
-import PreBookingForm from "@/app/prebooking/PreBookingForm";
-import PreBookingView from "@/app/prebooking/PreBookingView";
+import ValidationWrapper from "@/utils/ValidationWrapper";
+import InvoiceList from "@/app/invoice/InvoiceList";
+import InvoiceForm from "@/app/invoice/InvoiceForm";
+import PaymentSummaryReport from "@/app/report/PaymentSummaryReport";
+import PaymentLedgerReport from "@/app/report/PaymentLedgerReport";
 
 function AppRoutes() {
   return (
@@ -99,11 +107,28 @@ function AppRoutes() {
             path="/dispatch-return/view/:id"
             element={<DispatchReturnView />}
           />
+          <Route path="/invoice" element={<InvoiceList />} />
+          <Route path="/invoice-form" element={<InvoiceForm />} />
+          <Route path="/invoice-form/:id" element={<InvoiceForm />} />
+          <Route path="/quotation" element={<QuotationList />} />
+          <Route path="/quotation/form" element={<QuotationForm />} />
+          <Route path="/quotation/form/:id" element={<QuotationForm />} />
+          <Route path="/payment" element={<PaymentList />} />
+          <Route path="/payment/form" element={<PaymentForm />} />
+          <Route path="/payment/form/:id" element={<PaymentForm />} />
           <Route path="/report/stock" element={<Stock />} />
           <Route path="/report/buyer" element={<BuyerReport />} />
           <Route
             path="/report/single-item-stock"
             element={<SingleItemStock />}
+          />
+          <Route
+            path="/report/payment-summary"
+            element={<PaymentSummaryReport />}
+          />
+          <Route
+            path="/report/payment-ledger"
+            element={<PaymentLedgerReport />}
           />
           <Route path="/report/category-stock" element={<CategoryStock />} />
           <Route path="/report/godown-stock" element={<StockGoDown />} />
