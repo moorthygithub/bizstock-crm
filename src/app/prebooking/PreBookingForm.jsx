@@ -539,10 +539,14 @@ const PreBookingForm = () => {
                       handleInputChange(e, "pre_booking_buyer_id")
                     }
                     options={
-                      buyerData?.buyers?.map((buyer) => ({
-                        value: buyer.id,
-                        label: buyer.buyer_name,
-                      })) || []
+                      buyerData?.buyers
+                        ?.filter((buyer) =>
+                          buyer.buyer_type?.split(",").includes("1")
+                        )
+                        .map((buyer) => ({
+                          value: buyer.id,
+                          label: buyer.buyer_name,
+                        })) || []
                     }
                     placeholder="Select Buyer"
                     className="bg-white focus:ring-2 focus:ring-yellow-300"
@@ -677,13 +681,13 @@ const PreBookingForm = () => {
                         </TableHead>
                         {singlebranch == "Yes" && (
                           <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
-                            Box<span className="text-red-500 ml-1">*</span>
+                            Box
                           </TableHead>
                         )}
 
                         {doublebranch == "Yes" && (
                           <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
-                            Piece<span className="text-red-500 ml-1">*</span>
+                            Piece
                           </TableHead>
                         )}
                       </TableRow>
@@ -938,10 +942,14 @@ const PreBookingForm = () => {
                         handleInputChange(e, "pre_booking_buyer_id")
                       }
                       options={
-                        buyerData?.buyers?.map((buyer) => ({
-                          value: buyer.id,
-                          label: buyer.buyer_name,
-                        })) || []
+                        buyerData?.buyers
+                          ?.filter((buyer) =>
+                            buyer.buyer_type?.split(",").includes("1")
+                          )
+                          .map((buyer) => ({
+                            value: buyer.id,
+                            label: buyer.buyer_name,
+                          })) || []
                       }
                       placeholder="Select Buyer"
                       className="bg-white focus:ring-2 focus:ring-yellow-300"
@@ -1072,12 +1080,12 @@ const PreBookingForm = () => {
 
                         {singlebranch == "Yes" && (
                           <TableHead className="text-sm font-semibold text-gray-700 py-3 px-4">
-                            Box<span className="text-red-500 ml-1">*</span>
+                            Box
                           </TableHead>
                         )}
                         {doublebranch == "Yes" && (
                           <TableHead className="text-sm font-semibold text-gray-700 py-3 px-4">
-                            Piece<span className="text-red-500 ml-1">*</span>
+                            Piece
                           </TableHead>
                         )}
                         {/* <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3 text-center w-1/6">

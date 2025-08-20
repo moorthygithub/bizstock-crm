@@ -33,8 +33,8 @@ export function TeamSwitcher({ teams }) {
             <Logo />
           </div>
 
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold text-[#ff9e0e]">
+          <div className="grid flex-1 text-left text-lg leading-tight">
+            <span className="truncate font-semibold text-yellow-900">
               {activeTeam.name}
             </span>
             <span className="truncate text-xs">{activeTeam.plan}</span>

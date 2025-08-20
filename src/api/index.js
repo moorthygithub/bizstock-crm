@@ -9,7 +9,7 @@ export const PANEL_LOGIN = `/login`;
 //PANEL_FORGOT_PASSWORD
 export const PANEL_FORGOT_PASSWORD = `/forgot-password`;
 // //WEB_ENQUIRY
- export const WEB_ENQUIRY = `/createEnquiry`;
+export const WEB_ENQUIRY = `/createEnquiry`;
 //PROFILE
 export const PROFILE = `/fetch-profile`;
 export const EDIT_PROFILE = `/updateprofile`;
@@ -60,6 +60,7 @@ export const BUYER_LIST = `/buyers-list`;
 export const BUYER_EDIT_GET = `/buyers`;
 export const BUYER_EDIT_SUMBIT = `/buyers`;
 export const BUYER_CREATE = `/buyers`;
+export const FETCH_STATE = `/fetch-state`;
 //MASTER-BRANCH
 export const BRANCH_LIST_FETCH = `/fetch-branch`;
 export const BRANCH_LIST = `/branch-list`;
@@ -74,6 +75,21 @@ export const UPDATE_TEAM_STATUS = `/updateteamstatus`;
 export const GODOWN_LIST = `/godown-list`;
 export const GODOWN_CREATE = `/godown`;
 export const GODOWN_UPDATE = `/godown`;
+//INVOICE
+export const INVOICE = `/invoice-list`;
+export const INVOICE_FORM = `/invoice`;
+export const INVOICE_SUB = `/invoice-sub`;
+export const DISPATCH_INVOICE = `/dispatch-invoice`;
+export const DISPATCH_SUB_INVOICE = `/dispatchSub-invoice`;
+//Quatiation
+export const QUOTATION = `/quotation-list`;
+export const QUOTATION_FORM = `/quotation`;
+export const QUOTATION_SUB_DELETE = `/quotation-sub`;
+export const QUOTATION_STATUS = `/quotation-status`;
+//payment
+export const PAYMENT_MODE = `/payment-mode`;
+export const PAYMENT_LIST = `/payment-list`;
+export const PAYMENT_FORM = `/payment`;
 
 //REPORT STOCK -BUYER
 export const BUYER_REPORT = `/report-buyer-data`;
@@ -84,7 +100,8 @@ export const STOCK_GODOWN_REPORT = `/stock-godown`;
 export const SINGLE_ITEM_STOCK_REPORT = `/item-stock`;
 export const PURCHASE_REPORT = `/report-purchases-data`;
 export const DISPATCH_REPORT = `/report-dispatch-data`;
-
+export const PAYMENT_SUMMARY_REPORT = `/payment-summary`;
+export const PAYMENT_LEDGER_REPORT = `/payment-ledger`;
 // ROUTE CONFIGURATION
 export const ROUTES = {
   PURCHASE_EDIT: (id) => `/purchase/edit/${encryptId(id)}`,
@@ -93,6 +110,8 @@ export const ROUTES = {
   PURCHASE_RETURN_VIEW: (id) => `/purchase-return/view/${encryptId(id)}`,
   PREBOOKING_EDIT: (id) => `/pre-booking/edit/${encryptId(id)}`,
   PREBOOKING_VIEW: (id) => `/pre-booking/view/${encryptId(id)}`,
+  QUOTATION_EDIT: (id) => `/quotation/form/${encryptId(id)}`,
+  INVOICE_EDIT: (id) => `/invoice-form/${encryptId(id)}`,
   DISPATCH_EDIT: (id) => `/dispatch/edit/${encryptId(id)}`,
   DISPATCH_RETURN_EDIT: (id) => `/dispatch-return/edit/${encryptId(id)}`,
   DISPATCH_VIEW: (id) => `/dispatch/view/${encryptId(id)}`,
@@ -116,6 +135,12 @@ export const navigateToPreBookingEdit = (navigate, prebookingId) => {
 export const navigateToPreBookingView = (navigate, dispatchId) => {
   navigate(ROUTES.PREBOOKING_VIEW(dispatchId));
 };
+export const navigateToQuotationEdit = (navigate, dispatchId) => {
+  navigate(ROUTES.QUOTATION_EDIT(dispatchId));
+};
+export const navigateToInvoiceEdit = (navigate, dispatchId) => {
+  navigate(ROUTES.INVOICE_EDIT(dispatchId));
+};
 export const navigateTODispatchEdit = (navigate, dispatchId) => {
   navigate(ROUTES.DISPATCH_EDIT(dispatchId));
 };
@@ -127,6 +152,25 @@ export const navigateTODispatchReturnEdit = (navigate, dispatchId) => {
 };
 export const navigateTODispatchReturnView = (navigate, dispatchId) => {
   navigate(ROUTES.DISPATCH_RETURN_VIEW(dispatchId));
+};
+export const fetchInvoiceById = async (encryptedId, token) => {
+  try {
+    if (!token) throw new Error("No authentication token found");
+
+    const id = decryptId(encryptedId);
+    const response = await apiClient.get(`${INVOICE_FORM}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error, "error");
+
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch purchase details"
+    );
+  }
 };
 export const fetchPurchaseById = async (encryptedId, token) => {
   try {
@@ -162,12 +206,65 @@ export const fetchPurchaseReturnById = async (encryptedId, token) => {
     );
   }
 };
+export const fetchDispatchInvoiceById = async (id, token) => {
+  try {
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await apiClient.get(`${DISPATCH_INVOICE}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error, "error");
+
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch purchase details"
+    );
+  }
+};
+export const fetchDispatchInvoiceSubById = async (id, token) => {
+  try {
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await apiClient.get(`${DISPATCH_SUB_INVOICE}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error, "error");
+
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch purchase details"
+    );
+  }
+};
 export const fetchPreBookingById = async (encryptedId, token) => {
   try {
     if (!token) throw new Error("No authentication token found");
 
     const id = decryptId(encryptedId);
     const response = await apiClient.get(`${PRE_BOOKING_CREATE}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch purchase details"
+    );
+  }
+};
+export const fetchQuotationById = async (encryptedId, token) => {
+  try {
+    if (!token) throw new Error("No authentication token found");
+
+    const id = decryptId(encryptedId);
+    const response = await apiClient.get(`${QUOTATION_FORM}/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -89,6 +89,7 @@ const CreateDispatchReturnForm = () => {
       id: editId ? "" : null,
       dispatch_sub_item_id: "",
       dispatch_sub_godown_id: "",
+      dispatch_sub_rate: "",
       dispatch_sub_box: 0,
       item_brand: "",
       item_size: "",
@@ -102,6 +103,7 @@ const CreateDispatchReturnForm = () => {
       {
         dispatch_sub_item_id: "",
         dispatch_sub_godown_id: "",
+        dispatch_sub_rate: "",
         dispatch_sub_box: 0,
         dispatch_sub_piece: 0,
       },
@@ -154,6 +156,7 @@ const CreateDispatchReturnForm = () => {
             item_brand: sub.item_brand || "",
             item_size: sub.item_size || "",
             dispatch_sub_godown_id: sub.dispatch_sub_godown_id,
+            dispatch_sub_rate: sub.dispatch_sub_rate,
           }))
         : [
             {
@@ -163,6 +166,7 @@ const CreateDispatchReturnForm = () => {
               item_size: "",
               dispatch_sub_piece: "",
               dispatch_sub_godown_id: "",
+              dispatch_sub_rate: "",
             },
           ];
 
@@ -266,6 +270,7 @@ const CreateDispatchReturnForm = () => {
       const selectedItem = itemsData?.items?.find((item) => item.id === value);
       if (selectedItem) {
         updatedData[rowIndex]["item_size"] = selectedItem.item_size;
+        updatedData[rowIndex]["dispatch_sub_rate"] = selectedItem.item_rate;
         updatedData[rowIndex]["item_brand"] = selectedItem.item_brand;
       }
       focusBoxInput(rowIndex);
@@ -287,8 +292,6 @@ const CreateDispatchReturnForm = () => {
     let updatedFormData = { ...formData, [field]: value };
 
     if (field == "dispatch_buyer_id") {
-      console.log(value, "value");
-
       const selectedBuyer = buyerData?.buyers.find(
         (buyer) => buyer.id == value
       );
@@ -314,6 +317,7 @@ const CreateDispatchReturnForm = () => {
     invoiceData.forEach((row, index) => {
       if (!row.dispatch_sub_godown_id)
         missingFields.push(`Row ${index + 1}: Godown`);
+      if (!row.dispatch_sub_rate) missingFields.push(`Row ${index + 1}: Rate`);
       if (!row.dispatch_sub_item_id)
         missingFields.push(`Row ${index + 1}: Item`);
 
@@ -536,10 +540,14 @@ const CreateDispatchReturnForm = () => {
                     value={formData.dispatch_buyer_id}
                     onChange={(e) => handleInputChange(e, "dispatch_buyer_id")}
                     options={
-                      buyerData?.buyers?.map((buyer) => ({
-                        value: buyer.id,
-                        label: buyer.buyer_name,
-                      })) || []
+                      buyerData?.buyers
+                        ?.filter((buyer) =>
+                          buyer.buyer_type?.split(",").includes("1")
+                        )
+                        .map((buyer) => ({
+                          value: buyer.id,
+                          label: buyer.buyer_name,
+                        })) || []
                     }
                     placeholder="Select Buyer"
                     className="bg-white focus:ring-2 focus:ring-yellow-300"
@@ -670,6 +678,9 @@ const CreateDispatchReturnForm = () => {
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
+                        <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                          Rate <span className="text-red-500 ml-1">*</span>
+                        </TableHead>
                         {singlebranch == "Yes" && (
                           <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                             Box<span className="text-red-500 ml-1">*</span>
@@ -750,7 +761,6 @@ const CreateDispatchReturnForm = () => {
                               </button>
                             )}
                           </TableCell>
-
                           {/* Godown Select */}
                           <TableCell className="px-4 py-3 min-w-[150px] align-top">
                             <div className="space-y-1">
@@ -781,9 +791,24 @@ const CreateDispatchReturnForm = () => {
                               )}
                             </div>
                           </TableCell>
-
+                          <TableCell className="px-4 py-3 align-top min-w-[100px]">
+                            <div className="space-y-1">
+                              <Input
+                                className="bg-white border border-gray-300 w-full text-xs"
+                                value={row.dispatch_sub_rate}
+                                onChange={(e) =>
+                                  handlePaymentChange(
+                                    e,
+                                    rowIndex,
+                                    "dispatch_sub_rate"
+                                  )
+                                }
+                                placeholder="Rate"
+                              />
+                            </div>
+                          </TableCell>
                           {singlebranch == "Yes" && (
-                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                            <TableCell className="px-4 py-3 min-w-[100px] align-top">
                               <div className="space-y-1">
                                 <Input
                                   ref={(el) =>
@@ -815,7 +840,7 @@ const CreateDispatchReturnForm = () => {
                           )}
 
                           {doublebranch == "Yes" && (
-                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                            <TableCell className="px-4 py-3 min-w-[100px] align-top">
                               <div className="space-y-1">
                                 <Input
                                   className="bg-white border border-gray-300 w-full text-xs"
@@ -934,10 +959,14 @@ const CreateDispatchReturnForm = () => {
                         handleInputChange(e, "dispatch_buyer_id")
                       }
                       options={
-                        buyerData?.buyers?.map((buyer) => ({
-                          value: buyer.id,
-                          label: buyer.buyer_name,
-                        })) || []
+                        buyerData?.buyers
+                          ?.filter((buyer) =>
+                            buyer.buyer_type?.split(",").includes("1")
+                          )
+                          .map((buyer) => ({
+                            value: buyer.id,
+                            label: buyer.buyer_name,
+                          })) || []
                       }
                       placeholder="Select Buyer"
                       className="bg-white focus:ring-2 focus:ring-yellow-300"
@@ -1065,6 +1094,10 @@ const CreateDispatchReturnForm = () => {
                           Godown
                           <span className="text-red-500 ml-1 text-xs">*</span>
                         </TableHead>
+                        <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3">
+                          Rate
+                          <span className="text-red-500 ml-1 text-xs">*</span>
+                        </TableHead>
 
                         {singlebranch == "Yes" && (
                           <TableHead className="text-sm font-semibold text-gray-700 py-3 px-4">
@@ -1173,7 +1206,22 @@ const CreateDispatchReturnForm = () => {
                               )}
                             </div>
                           </TableCell>
-
+                          <TableCell className="px-4 py-3 align-top">
+                            <div className="space-y-1">
+                              <Input
+                                className="bg-white border border-gray-300 w-full text-xs"
+                                value={row.dispatch_sub_rate}
+                                onChange={(e) =>
+                                  handlePaymentChange(
+                                    e,
+                                    rowIndex,
+                                    "dispatch_sub_rate"
+                                  )
+                                }
+                                placeholder="Rate"
+                              />
+                            </div>
+                          </TableCell>
                           {singlebranch == "Yes" && (
                             <TableCell className="px-4 py-3 align-top min-w-28">
                               <div className="flex flex-col gap-1">
