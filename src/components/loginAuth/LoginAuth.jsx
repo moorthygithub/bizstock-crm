@@ -118,7 +118,7 @@ export default function LoginAuth() {
             transition={{ delay: 0.2 }}
           >
             <Card className="border-none shadow-none">
-              {/* <CardHeader>
+              {/* <CardHeader className="mb-4">
                 <div className="flex items-center space-x-3">
                   <motion.div
                     animate={{ scale: [1, 1.4, 1] }}
@@ -130,11 +130,11 @@ export default function LoginAuth() {
                   >
                     <Logo />
                   </motion.div>{" "}
-                  <span className="text-3xl font-bold text-yellow-900">
+                  <span className="text-xl font-bold text-yellow-900">
                     {companyname?.CompanyName}
                   </span>
                 </div>
-                <CardTitle className="text-xl text-yellow-900 mt-4">
+                <CardTitle className="text-3xl text-yellow-900 mt-4">
                   Sign In
                 </CardTitle>
               </CardHeader> */}
@@ -163,7 +163,6 @@ export default function LoginAuth() {
                   </span>
                 </CardTitle>
               </CardHeader>
-
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -173,6 +172,7 @@ export default function LoginAuth() {
                     <Input
                       id="email"
                       type="text"
+                      autoFocus
                       placeholder="Enter your username"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -225,7 +225,7 @@ export default function LoginAuth() {
                     <span></span>
                     <span
                       onClick={() => navigate("/forgot-password")}
-                      className="text-yellow-800 underline cursor-pointer"
+                      className="text-yellow-800 underline cursor-pointer "
                     >
                       Forgot Password?
                     </span>

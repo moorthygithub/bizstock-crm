@@ -100,7 +100,7 @@ export default function Page({ children }) {
               <Logo />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-yellow-900 leading-tight">
+              <span className="text-sm font-bold text-yellow-900 leading-tight">
                 {companyname?.CompanyName}
               </span>
             </div>

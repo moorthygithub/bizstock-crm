@@ -478,6 +478,7 @@ const InvoiceForm = () => {
                     value={formData.invoice_date}
                     onChange={(e) => handleInputChange(e, "invoice_date")}
                     type="date"
+                    autoFocus
                   />
                 </div>
                 <div className="mb-4">
@@ -892,6 +893,7 @@ const InvoiceForm = () => {
                         onChange={(e) => handleInputChange(e, "invoice_date")}
                         placeholder="Enter Payment Date"
                         type="date"
+                        autoFocus
                       />
                     </div>
                   </div>

@@ -516,6 +516,7 @@ const CreateDispatch = () => {
                     value={formData.dispatch_date}
                     onChange={(e) => handleInputChange(e, "dispatch_date")}
                     type="date"
+                    autoFocus
                   />
                 </div>
                 <div className="mb-4">
@@ -928,6 +929,7 @@ const CreateDispatch = () => {
                         onChange={(e) => handleInputChange(e, "dispatch_date")}
                         placeholder="Enter Payment Date"
                         type="date"
+                        autoFocus
                       />
                     </div>
                   </div>
