@@ -43,7 +43,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  DISPATCH_EDIT_LIST,
   fetchPreBookingById,
   navigateTODispatchEdit,
   navigateTODispatchView,
@@ -71,6 +70,7 @@ import { useToast } from "@/hooks/use-toast";
 import moment from "moment";
 import { RiWhatsappFill } from "react-icons/ri";
 import { useSelector } from "react-redux";
+import { PRE_BOOKING_CREATE } from "../../api";
 const PreBookingList = () => {
   const token = usetoken();
   const {
@@ -112,7 +112,7 @@ const PreBookingList = () => {
   const confirmDelete = async () => {
     try {
       const response = await apiClient.delete(
-        `${DISPATCH_EDIT_LIST}/${deleteItemId}`,
+        `${PRE_BOOKING_CREATE}/${deleteItemId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
