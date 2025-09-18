@@ -197,6 +197,12 @@ const InvoiceList = () => {
       },
     },
     {
+      accessorKey: "invoice_amount",
+      header: "Amount",
+      id: "Amount",
+      cell: ({ row }) => <div>{row.original.invoice_amount}</div>,
+    },
+    {
       id: "actions",
       header: "Action",
       cell: ({ row }) => {
