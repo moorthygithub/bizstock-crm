@@ -287,7 +287,7 @@ const PaymentForm = ({ paymentId = null }) => {
                   Payment Type *
                 </label>
                 <MemoizedSelect
-                  value={formData.buyepayment_moder_type}
+                  value={formData.payment_mode}
                   onChange={(vals) =>
                     setFormData({ ...formData, payment_mode: vals })
                   }
