@@ -48,11 +48,14 @@ import {
   Loader2,
   MinusCircle,
   PlusCircle,
+  SquarePlus,
   Trash2,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import BuyerForm from "../master/buyer/CreateBuyer";
+import CreateItem from "../master/item/CreateItem";
 const InvoiceForm = () => {
   const { id } = useParams();
   const decryptedId = decryptId(id);
@@ -235,7 +238,7 @@ const InvoiceForm = () => {
     } else {
       if (
         ["invoice_sub_box", "invoice_sub_piece", "invoice_sub_rate"].includes(
-          fieldName
+          fieldName,
         ) &&
         !/^\d*$/.test(value)
       ) {
@@ -378,7 +381,7 @@ const InvoiceForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -390,7 +393,7 @@ const InvoiceForm = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId)
+          prevData.filter((row) => row.id !== deleteItemId),
         );
       } else if (data.code === 400) {
         toast({
@@ -494,7 +497,7 @@ const InvoiceForm = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1")
+                          buyer.buyer_type?.split(",").includes("1"),
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -637,7 +640,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_ref"
+                                      "dispatch_ref",
                                     )
                                   }
                                   options={
@@ -645,7 +648,7 @@ const InvoiceForm = () => {
                                       (ref) => ({
                                         value: ref.dispatch_ref,
                                         label: ref.dispatch_ref,
-                                      })
+                                      }),
                                     ) || []
                                   }
                                   placeholder="Select Ref"
@@ -689,7 +692,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_item_id"
+                                    "invoice_sub_item_id",
                                   )
                                 }
                                 options={
@@ -719,7 +722,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_godown_id"
+                                    "invoice_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -754,7 +757,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_box"
+                                      "invoice_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -781,7 +784,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_piece"
+                                      "invoice_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"
@@ -807,7 +810,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_rate"
+                                    "invoice_sub_rate",
                                   )
                                 }
                                 placeholder="Enter Rate"
@@ -904,6 +907,16 @@ const InvoiceForm = () => {
                       >
                         Buyer <span className="text-red-500">*</span>
                       </label>
+                      {!editId && (
+                        <button
+                          type="button"
+                          className="flex items-center text-xs font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 px-2 py-1 rounded-full transition-colors duration-150"
+                        >
+                          <SquarePlus className="h-3 w-3 mr-1" />
+
+                          <BuyerForm />
+                        </button>
+                      )}
                     </div>
 
                     <MemoizedSelect
@@ -912,7 +925,7 @@ const InvoiceForm = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1")
+                            buyer.buyer_type?.split(",").includes("1"),
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1023,6 +1036,12 @@ const InvoiceForm = () => {
                                 *
                               </span>
                             </span>
+                            {!editId && (
+                              <div className="flex items-center gap-1">
+                                <SquarePlus className="h-4 w-4 text-red-600" />
+                                <CreateItem />
+                              </div>
+                            )}
                           </div>
                         </TableHead>
 
@@ -1072,7 +1091,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_ref"
+                                      "dispatch_ref",
                                     )
                                   }
                                   options={
@@ -1080,7 +1099,7 @@ const InvoiceForm = () => {
                                       (ref) => ({
                                         value: ref.dispatch_ref,
                                         label: ref.dispatch_ref,
-                                      })
+                                      }),
                                     ) || []
                                   }
                                   placeholder="Select Ref"
@@ -1096,7 +1115,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_item_id"
+                                    "invoice_sub_item_id",
                                   )
                                 }
                                 options={
@@ -1152,7 +1171,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_godown_id"
+                                    "invoice_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -1180,7 +1199,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_box"
+                                      "invoice_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1206,7 +1225,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_piece"
+                                      "invoice_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"
@@ -1232,7 +1251,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_rate"
+                                    "invoice_sub_rate",
                                   )
                                 }
                                 placeholder="Enter Rate"

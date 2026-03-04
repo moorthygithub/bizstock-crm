@@ -129,6 +129,12 @@ const ItemList = () => {
       cell: ({ row }) => <div>{row.original.item_weight}</div>,
     },
     {
+      id: "Surface",
+      accessorKey: "item_surface",
+      header: "Surface",
+      cell: ({ row }) => <div>{row.original.item_surface}</div>,
+    },
+    {
       id: "Minimum Stock",
       accessorKey: "item_minimum_stock",
       header: "Minimum Stock",
@@ -200,7 +206,7 @@ const ItemList = () => {
 
   const filteredItems =
     item?.filter((item) =>
-      item.item_name.toLowerCase().includes(searchQuery.toLowerCase())
+      item.item_name.toLowerCase().includes(searchQuery.toLowerCase()),
     ) || [];
 
   // Create the table instance
@@ -461,7 +467,7 @@ const ItemList = () => {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -480,7 +486,7 @@ const ItemList = () => {
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}

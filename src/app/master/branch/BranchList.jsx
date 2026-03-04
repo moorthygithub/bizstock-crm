@@ -99,6 +99,12 @@ const BranchList = () => {
       cell: ({ row }) => <div>{row.original.branch_d_unit}</div>,
     },
     {
+      id: "Batch",
+      accessorKey: "branch_batch",
+      header: "Batch",
+      cell: ({ row }) => <div>{row.original.branch_batch}</div>,
+    },
+    {
       id: "Status",
       accessorKey: "branch_status",
       header: "Status",
