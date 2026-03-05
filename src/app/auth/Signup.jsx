@@ -28,7 +28,8 @@ function Signup() {
     branch_prefix: "",
     branch_email: "",
     branch_d_unit: "No",
-    branch_s_unit: "No"
+    branch_s_unit: "No",
+    branch_batch: "No",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
@@ -57,31 +58,36 @@ function Signup() {
   }, [isLoading]);
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleUnitChange = (unitType) => {
     if (unitType === "both") {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         branch_d_unit: "Yes",
-        branch_s_unit: "Yes"
+        branch_s_unit: "Yes",
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         branch_d_unit: unitType === "d_unit" ? "Yes" : "No",
-        branch_s_unit: unitType === "s_unit" ? "Yes" : "No"
+        branch_s_unit: unitType === "s_unit" ? "Yes" : "No",
       }));
     }
   };
-
+  const handleBatchToggle = () => {
+    setFormData((prev) => ({
+      ...prev,
+      branch_batch: prev.branch_batch === "Yes" ? "No" : "Yes",
+    }));
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     // Validate that at least one unit type is selected
     if (formData.branch_d_unit === "No" && formData.branch_s_unit === "No") {
       toast({
@@ -100,9 +106,10 @@ function Signup() {
         toast({
           variant: "default",
           title: "Success!",
-          description: "Your 15-day free trial has been activated! Check your email for details.",
+          description:
+            "Your 15-day free trial has been activated! Check your email for details.",
         });
-    
+
         setTimeout(() => {
           navigate("/");
         }, 2000);
@@ -114,7 +121,8 @@ function Signup() {
         variant: "destructive",
         title: "Signup Failed",
         description:
-          error.response?.data?.message || "Please check your information and try again.",
+          error.response?.data?.message ||
+          "Please check your information and try again.",
       });
     } finally {
       setIsLoading(false);
@@ -139,8 +147,12 @@ function Signup() {
             transition={{ delay: 0.5 }}
             className="text-center mt-6"
           >
-            <h3 className="text-2xl font-bold text-yellow-900">15-Day Free Trial</h3>
-            <p className="text-yellow-800 mt-2">Get full access to all features</p>
+            <h3 className="text-2xl font-bold text-yellow-900">
+              15-Day Free Trial
+            </h3>
+            <p className="text-yellow-800 mt-2">
+              Get full access to all features
+            </p>
           </motion.div>
         </div>
 
@@ -190,7 +202,9 @@ function Signup() {
                       autoFocus
                       placeholder="Enter your company name"
                       value={formData.branch_name}
-                      onChange={(e) => handleInputChange("branch_name", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("branch_name", e.target.value)
+                      }
                       required
                       className="mt-1 bg-white text-black"
                     />
@@ -205,7 +219,9 @@ function Signup() {
                       type="text"
                       placeholder="Enter contact person name"
                       value={formData.branch_contact_name}
-                      onChange={(e) => handleInputChange("branch_contact_name", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("branch_contact_name", e.target.value)
+                      }
                       required
                       className="mt-1 bg-white text-black"
                     />
@@ -220,7 +236,9 @@ function Signup() {
                       type="tel"
                       placeholder="Enter your WhatsApp number"
                       value={formData.branch_whatsapp}
-                      onChange={(e) => handleInputChange("branch_whatsapp", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("branch_whatsapp", e.target.value)
+                      }
                       required
                       onKeyDown={(e) => {
                         const allowedKeys = [
@@ -228,14 +246,17 @@ function Signup() {
                           "Delete",
                           "ArrowLeft",
                           "ArrowRight",
-                          "Tab"
+                          "Tab",
                         ];
-                    
-                        if (!/[0-9]/.test(e.key) && !allowedKeys.includes(e.key)) {
+
+                        if (
+                          !/[0-9]/.test(e.key) &&
+                          !allowedKeys.includes(e.key)
+                        ) {
                           e.preventDefault();
                         }
                       }}
-                      maxLength='10'
+                      maxLength="10"
                       className="mt-1 bg-white text-black"
                     />
                   </div>
@@ -249,7 +270,9 @@ function Signup() {
                       type="text"
                       placeholder="Enter short name for your company"
                       value={formData.branch_prefix}
-                      onChange={(e) => handleInputChange("branch_prefix", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("branch_prefix", e.target.value)
+                      }
                       required
                       className="mt-1 bg-white text-black"
                     />
@@ -264,7 +287,9 @@ function Signup() {
                       type="email"
                       placeholder="Enter your email address"
                       value={formData.branch_email}
-                      onChange={(e) => handleInputChange("branch_email", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("branch_email", e.target.value)
+                      }
                       required
                       className="mt-1 bg-white text-black"
                     />
@@ -278,11 +303,17 @@ function Signup() {
                           type="radio"
                           id="box"
                           name="unitType"
-                          checked={formData.branch_d_unit === "Yes" && formData.branch_s_unit === "No"}
+                          checked={
+                            formData.branch_d_unit === "Yes" &&
+                            formData.branch_s_unit === "No"
+                          }
                           onChange={() => handleUnitChange("d_unit")}
                           className="w-4 h-4 text-yellow-600"
                         />
-                        <Label htmlFor="box" className="text-yellow-900 cursor-pointer">
+                        <Label
+                          htmlFor="box"
+                          className="text-yellow-900 cursor-pointer"
+                        >
                           Box only
                         </Label>
                       </div>
@@ -291,11 +322,17 @@ function Signup() {
                           type="radio"
                           id="piece"
                           name="unitType"
-                          checked={formData.branch_s_unit === "Yes" && formData.branch_d_unit === "No"}
+                          checked={
+                            formData.branch_s_unit === "Yes" &&
+                            formData.branch_d_unit === "No"
+                          }
                           onChange={() => handleUnitChange("s_unit")}
                           className="w-4 h-4 text-yellow-600"
                         />
-                        <Label htmlFor="piece" className="text-yellow-900 cursor-pointer">
+                        <Label
+                          htmlFor="piece"
+                          className="text-yellow-900 cursor-pointer"
+                        >
                           Piece only
                         </Label>
                       </div>
@@ -304,20 +341,64 @@ function Signup() {
                           type="radio"
                           id="both"
                           name="unitType"
-                          checked={formData.branch_d_unit === "Yes" && formData.branch_s_unit === "Yes"}
+                          checked={
+                            formData.branch_d_unit === "Yes" &&
+                            formData.branch_s_unit === "Yes"
+                          }
                           onChange={() => handleUnitChange("both")}
                           className="w-4 h-4 text-yellow-600"
                         />
-                        <Label htmlFor="both" className="text-yellow-900 cursor-pointer">
+                        <Label
+                          htmlFor="both"
+                          className="text-yellow-900 cursor-pointer"
+                        >
                           Both (Box and Piece)
                         </Label>
                       </div>
                     </div>
+
                     <CardDescription className="text-yellow-800">
-                      Select how you want to maintain your stock in quantity 
+                      Select how you want to maintain your stock in quantity
                     </CardDescription>
                   </div>
+                  <div className="flex items-center gap-3">
+                    <div
+                      onClick={handleBatchToggle}
+                      className={`
+      w-5 h-5 rounded-md border-2 cursor-pointer flex items-center justify-center
+      transition-all duration-200 shrink-0
+      ${
+        formData.branch_batch === "Yes"
+          ? "bg-yellow-600 border-yellow-600"
+          : "bg-white border-gray-300 hover:border-yellow-500"
+      }
+    `}
+                    >
+                      {formData.branch_batch === "Yes" && (
+                        <svg
+                          className="w-3 h-3 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={3}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
+                    </div>
 
+                    <Label
+                      htmlFor="branch_batch"
+                      onClick={handleBatchToggle}
+                      className="text-yellow-900 cursor-pointer text-sm font-medium select-none"
+                    >
+                      Do you have Batch No
+                    </Label>
+                  </div>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
