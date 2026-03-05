@@ -49,6 +49,7 @@ const CreateItem = ({ editId = null }) => {
     item_brand: "",
     item_weight: "",
     item_minimum_stock: "",
+    item_surface: "",
     item_image: "",
     item_status: editId ? "" : null,
   });
@@ -84,6 +85,7 @@ const CreateItem = ({ editId = null }) => {
           item_brand: fetchedData?.item_brand || "",
           item_weight: fetchedData?.item_weight || "",
           item_minimum_stock: fetchedData?.item_minimum_stock || "",
+          item_surface: fetchedData?.item_surface || "",
           item_image: fetchedData?.item_image || "",
           item_status: fetchedData?.item_status || "Active",
         });
@@ -96,6 +98,7 @@ const CreateItem = ({ editId = null }) => {
           item_brand: fetchedData?.item_brand || "",
           item_weight: fetchedData?.item_weight || "",
           item_minimum_stock: fetchedData?.item_minimum_stock || "",
+          item_surface: fetchedData?.item_surface || "",
           item_image: fetchedData?.item_image || "",
           item_status: fetchedData?.item_status || "Active",
         });
@@ -152,6 +155,7 @@ const CreateItem = ({ editId = null }) => {
       data.append("item_weight", formData.item_weight);
       data.append("item_piece", formData.item_piece);
       data.append("item_minimum_stock", formData.item_minimum_stock);
+      data.append("item_surface", formData.item_surface);
       if (formData.item_image) {
         data.append("item_image", formData.item_image);
       }
@@ -191,6 +195,7 @@ const CreateItem = ({ editId = null }) => {
           item_brand: "",
           item_weight: "",
           item_minimum_stock: "",
+          item_surface: "",
           item_image: null,
           item_status: "Active",
         });
@@ -304,7 +309,12 @@ const CreateItem = ({ editId = null }) => {
             </div>
           )
         ) : pathname === "/purchase/create" ||
-          pathname === "/dispatch/create" ? (
+          pathname === "/dispatch/create" ||
+          pathname === "/quotation/form" ||
+          pathname === "/pre-booking/create" ||
+          pathname === "/dispatch-return/create" ||
+          pathname === "/invoice-form" ||
+          pathname == "/purchase-return/create" ? (
           <p className="text-xs text-red-600 w-32 hover:text-red-300 cursor-pointer">
             Item
           </p>
@@ -435,6 +445,17 @@ const CreateItem = ({ editId = null }) => {
                   />
                 </div>
                 <div>
+                  <label htmlFor="item_surface" className="text-sm font-medium">
+                    Item Surface
+                  </label>
+                  <Input
+                    id="item_surface"
+                    placeholder="Item Surface"
+                    value={formData.item_surface}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
                   {editId && (
                     <div className="grid gap-1">
                       <label
@@ -490,8 +511,8 @@ const CreateItem = ({ editId = null }) => {
                         typeof formData.item_image === "string"
                           ? `${IMAGE_URL}${formData.item_image}`
                           : formData.item_image instanceof File
-                          ? URL.createObjectURL(formData.item_image)
-                          : NO_IMAGE_URL
+                            ? URL.createObjectURL(formData.item_image)
+                            : NO_IMAGE_URL
                       }
                       alt="Item Preview"
                       className="w-24 h-14 mt-1 rounded border object-cover"

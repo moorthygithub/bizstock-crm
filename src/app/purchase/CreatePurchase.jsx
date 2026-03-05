@@ -65,6 +65,8 @@ const CreatePurchase = () => {
   const singlebranch = useSelector((state) => state.auth.branch_s_unit);
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
   const userType = useSelector((state) => state.auth.user_type);
+  const userbatch = useSelector((state) => state.auth);
+  console.log(userbatch, "userbatch");
   const editId = Boolean(id);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -122,7 +124,7 @@ const CreatePurchase = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length]
+    [invoiceData.length],
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -257,7 +259,7 @@ const CreatePurchase = () => {
             index,
             purchase_sub_item_id,
             purchase_sub_godown_id,
-            [...invoiceData]
+            [...invoiceData],
           );
         }
       });
@@ -266,7 +268,7 @@ const CreatePurchase = () => {
     editId,
     invoiceData
       .map(
-        (row) => row?.purchase_sub_item_id + "-" + row?.purchase_sub_godown_id
+        (row) => row?.purchase_sub_item_id + "-" + row?.purchase_sub_godown_id,
       )
       .join(","),
   ]);
@@ -415,7 +417,7 @@ const CreatePurchase = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -427,7 +429,7 @@ const CreatePurchase = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId)
+          prevData.filter((row) => row.id !== deleteItemId),
         );
       } else if (data.code === 400) {
         toast({
@@ -540,7 +542,7 @@ const CreatePurchase = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1")
+                          buyer.buyer_type?.split(",").includes("1"),
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -684,7 +686,7 @@ const CreatePurchase = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_item_id"
+                                    "purchase_sub_item_id",
                                   )
                                 }
                                 options={
@@ -745,7 +747,7 @@ const CreatePurchase = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_godown_id"
+                                    "purchase_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -780,7 +782,7 @@ const CreatePurchase = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_box"
+                                      "purchase_sub_box",
                                     )
                                   }
                                   placeholder="Qty"
@@ -807,7 +809,7 @@ const CreatePurchase = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_piece"
+                                      "purchase_sub_piece",
                                     )
                                   }
                                   placeholder="Piece"
@@ -929,7 +931,7 @@ const CreatePurchase = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1")
+                            buyer.buyer_type?.split(",").includes("1"),
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1079,7 +1081,7 @@ const CreatePurchase = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_item_id"
+                                    "purchase_sub_item_id",
                                   )
                                 }
                                 options={
@@ -1135,7 +1137,7 @@ const CreatePurchase = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_godown_id"
+                                    "purchase_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -1163,7 +1165,7 @@ const CreatePurchase = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_box"
+                                      "purchase_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1189,7 +1191,7 @@ const CreatePurchase = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_piece"
+                                      "purchase_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"

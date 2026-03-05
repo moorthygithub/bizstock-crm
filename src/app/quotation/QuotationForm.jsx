@@ -55,6 +55,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateItem from "../master/item/CreateItem";
+import BuyerForm from "../master/buyer/CreateBuyer";
 const QuotationForm = () => {
   const { id } = useParams();
   const decryptedId = decryptId(id);
@@ -118,7 +119,7 @@ const QuotationForm = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length]
+    [invoiceData.length],
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -243,7 +244,7 @@ const QuotationForm = () => {
             index,
             quotation_sub_item_id,
             quotation_sub_godown_id,
-            [...invoiceData]
+            [...invoiceData],
           );
         }
       });
@@ -252,7 +253,8 @@ const QuotationForm = () => {
     editId,
     invoiceData
       .map(
-        (row) => row?.quotation_sub_item_id + "-" + row?.quotation_sub_godown_id
+        (row) =>
+          row?.quotation_sub_item_id + "-" + row?.quotation_sub_godown_id,
       )
       .join(","),
   ]);
@@ -290,7 +292,7 @@ const QuotationForm = () => {
       console.log(value, "value");
 
       const selectedBuyer = buyerData?.buyers.find(
-        (buyer) => buyer.id == value
+        (buyer) => buyer.id == value,
       );
       //   if (selectedBuyer) {
       //     updatedFormData.dispatch_buyer_city = selectedBuyer.buyer_city;
@@ -308,7 +310,7 @@ const QuotationForm = () => {
   const CheckBarcode = (value, rowIndex, callback) => {
     if (value.length !== 6) return;
     const foundItem = itemsData?.items?.find(
-      (item) => item.item_barcode === value
+      (item) => item.item_barcode === value,
     );
 
     if (foundItem) {
@@ -476,7 +478,7 @@ const QuotationForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -488,7 +490,7 @@ const QuotationForm = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId)
+          prevData.filter((row) => row.id !== deleteItemId),
         );
       } else if (data.code === 400) {
         toast({
@@ -592,7 +594,7 @@ const QuotationForm = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1")
+                          buyer.buyer_type?.split(",").includes("1"),
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -816,7 +818,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_item_id"
+                                    "quotation_sub_item_id",
                                   )
                                 }
                                 options={
@@ -876,7 +878,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_godown_id"
+                                    "quotation_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -906,7 +908,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_rate"
+                                    "quotation_sub_rate",
                                   )
                                 }
                                 placeholder="Rate"
@@ -926,7 +928,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_box"
+                                      "quotation_sub_box",
                                     )
                                   }
                                   placeholder="Qty"
@@ -953,7 +955,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_piece"
+                                      "quotation_sub_piece",
                                     )
                                   }
                                   placeholder="Piece"
@@ -1049,6 +1051,16 @@ const QuotationForm = () => {
                       >
                         Buyer <span className="text-red-500">*</span>
                       </label>
+                      {!editId && (
+                        <button
+                          type="button"
+                          className="flex items-center text-xs font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 px-2 py-1 rounded-full transition-colors duration-150"
+                        >
+                          <SquarePlus className="h-3 w-3 mr-1" />
+
+                          <BuyerForm />
+                        </button>
+                      )}
                     </div>
 
                     <MemoizedSelect
@@ -1059,7 +1071,7 @@ const QuotationForm = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1")
+                            buyer.buyer_type?.split(",").includes("1"),
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1278,7 +1290,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_item_id"
+                                    "quotation_sub_item_id",
                                   )
                                 }
                                 options={
@@ -1335,7 +1347,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_godown_id"
+                                    "quotation_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -1362,7 +1374,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_rate"
+                                    "quotation_sub_rate",
                                   )
                                 }
                                 placeholder="Rate"
@@ -1380,7 +1392,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_box"
+                                      "quotation_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1408,7 +1420,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_piece"
+                                      "quotation_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"

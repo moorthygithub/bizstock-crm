@@ -239,6 +239,9 @@ const BuyerForm = ({ buyerId = null }) => {
         "/purchase/edit",
         "/dispatch-return/create",
         "/purchase-return/create",
+        "/pre-booking/create",
+        "/invoice-form",
+        "/quotation/form",
       ].includes(pathname)
     ) {
       return (
@@ -363,7 +366,7 @@ const BuyerForm = ({ buyerId = null }) => {
                   value={formData.buyer_state}
                   onValueChange={(value) => {
                     const selectedState = stateData?.find(
-                      (s) => s.state_name === value
+                      (s) => s.state_name === value,
                     );
                     setFormData((prev) => ({
                       ...prev,
