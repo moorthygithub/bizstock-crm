@@ -70,8 +70,7 @@ const PreBookingForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const singlebranch = useSelector((state) => state.auth.branch_s_unit);
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
-  // const doublebranch = "Yes";
-  // console.log(singlebranch, doublebranch);
+  const userbatch = useSelector((state) => state.auth?.branch_batch);
   const token = usetoken();
 
   const [formData, setFormData] = useState({
@@ -89,6 +88,7 @@ const PreBookingForm = () => {
       id: editId ? "" : null,
       pre_booking_sub_item_id: "",
       pre_booking_sub_godown_id: "",
+      pre_booking_sub_batch_no: "",
       pre_booking_sub_box: 0,
       item_brand: "",
       item_size: "",
@@ -107,6 +107,7 @@ const PreBookingForm = () => {
       {
         pre_booking_sub_item_id: "",
         pre_booking_sub_godown_id: "",
+        pre_booking_sub_batch_no: "",
         pre_booking_sub_box: 0,
         pre_booking_sub_piece: 0,
       },
@@ -118,7 +119,7 @@ const PreBookingForm = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length]
+    [invoiceData.length],
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -155,6 +156,7 @@ const PreBookingForm = () => {
             item_brand: sub.item_brand || "",
             item_size: sub.item_size || "",
             pre_booking_sub_godown_id: sub.pre_booking_sub_godown_id,
+            pre_booking_sub_batch_no: sub.pre_booking_sub_batch_no,
           }))
         : [
             {
@@ -164,6 +166,7 @@ const PreBookingForm = () => {
               item_size: "",
               pre_booking_sub_piece: "",
               pre_booking_sub_godown_id: "",
+              pre_booking_sub_batch_no: "",
             },
           ];
 
@@ -245,7 +248,7 @@ const PreBookingForm = () => {
             index,
             pre_booking_sub_item_id,
             pre_booking_sub_godown_id,
-            [...invoiceData]
+            [...invoiceData],
           );
         }
       });
@@ -255,7 +258,7 @@ const PreBookingForm = () => {
     invoiceData
       .map(
         (row) =>
-          row?.pre_booking_sub_item_id + "-" + row?.pre_booking_sub_godown_id
+          row?.pre_booking_sub_item_id + "-" + row?.pre_booking_sub_godown_id,
       )
       .join(","),
   ]);
@@ -293,7 +296,7 @@ const PreBookingForm = () => {
       console.log(value, "value");
 
       const selectedBuyer = buyerData?.buyers.find(
-        (buyer) => buyer.id == value
+        (buyer) => buyer.id == value,
       );
       console.log(selectedBuyer, "selectedBuyer");
       if (selectedBuyer) {
@@ -320,6 +323,15 @@ const PreBookingForm = () => {
         missingFields.push(`Row ${index + 1}: Godown`);
       if (!row.pre_booking_sub_item_id)
         missingFields.push(`Row ${index + 1}: Item`);
+      if (userbatch == "Yes") {
+        if (
+          row.pre_booking_sub_batch_no === null ||
+          row.pre_booking_sub_batch_no === undefined ||
+          row.pre_booking_sub_batch_no === ""
+        ) {
+          missingFields.push(`Row ${index + 1}: Batch No`);
+        }
+      }
       if (singlebranch == "Yes") {
         if (
           row.pre_booking_sub_box === null ||
@@ -416,7 +428,7 @@ const PreBookingForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -428,7 +440,7 @@ const PreBookingForm = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId)
+          prevData.filter((row) => row.id !== deleteItemId),
         );
       } else if (data.code === 400) {
         toast({
@@ -542,7 +554,7 @@ const PreBookingForm = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1")
+                          buyer.buyer_type?.split(",").includes("1"),
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -677,6 +689,11 @@ const PreBookingForm = () => {
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Item
                         </TableHead>
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
@@ -709,7 +726,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_item_id"
+                                    "pre_booking_sub_item_id",
                                   )
                                 }
                                 options={
@@ -760,7 +777,27 @@ const PreBookingForm = () => {
                               </button>
                             )}
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.pre_booking_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "pre_booking_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Select */}
                           <TableCell className="px-4 py-3 min-w-[150px] align-top">
                             <div className="space-y-1">
@@ -770,7 +807,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_godown_id"
+                                    "pre_booking_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -805,7 +842,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_box"
+                                      "pre_booking_sub_box",
                                     )
                                   }
                                   placeholder="Qty"
@@ -833,7 +870,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_piece"
+                                      "pre_booking_sub_piece",
                                     )
                                   }
                                   placeholder="Piece"
@@ -946,7 +983,7 @@ const PreBookingForm = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1")
+                            buyer.buyer_type?.split(",").includes("1"),
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1074,7 +1111,11 @@ const PreBookingForm = () => {
                             )}
                           </div>
                         </TableHead>
-
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3">
                           Godown
                           <span className="text-red-500 ml-1 text-xs">*</span>
@@ -1112,7 +1153,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_item_id"
+                                    "pre_booking_sub_item_id",
                                   )
                                 }
                                 options={
@@ -1159,7 +1200,27 @@ const PreBookingForm = () => {
                               </button>
                             )}
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.pre_booking_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "pre_booking_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Column */}
                           <TableCell className="px-4 py-3 align-top">
                             <div className="flex flex-col gap-1">
@@ -1169,7 +1230,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_godown_id"
+                                    "pre_booking_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -1198,7 +1259,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_box"
+                                      "pre_booking_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1226,7 +1287,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_piece"
+                                      "pre_booking_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"

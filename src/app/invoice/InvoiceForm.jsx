@@ -70,6 +70,7 @@ const InvoiceForm = () => {
   const navigate = useNavigate();
   const boxInputRefs = useRef([]);
   const [isLoading, setIsLoading] = useState(false);
+  const userbatch = useSelector((state) => state.auth?.branch_batch);
 
   const token = usetoken();
 
@@ -92,6 +93,7 @@ const InvoiceForm = () => {
       invoice_sub_piece: "",
       invoice_sub_rate: "",
       invoice_sub_amount: "",
+      invoice_sub_batch_no: "",
     },
   ]);
 
@@ -106,6 +108,7 @@ const InvoiceForm = () => {
         invoice_sub_piece: "",
         invoice_sub_rate: "",
         invoice_sub_amount: "",
+        invoice_sub_batch_no: "",
       },
     ]);
   }, []);
@@ -128,6 +131,7 @@ const InvoiceForm = () => {
             dispatch_ref: "",
             invoice_sub_item_id: "",
             invoice_sub_godown_id: "",
+            invoice_sub_batch_no: "",
             invoice_sub_box: "",
             invoice_sub_piece: "",
             invoice_sub_rate: "",
@@ -174,6 +178,7 @@ const InvoiceForm = () => {
             dispatch_ref: sub.dispatch_ref || "",
             invoice_sub_item_id: sub.invoice_sub_item_id || 0,
             invoice_sub_godown_id: sub.invoice_sub_godown_id || 0,
+            invoice_sub_batch_no: sub.invoice_sub_batch_no || "",
             invoice_sub_box: sub.invoice_sub_box || "",
             invoice_sub_piece: sub.invoice_sub_piece || "",
             invoice_sub_rate: sub.invoice_sub_rate || "",
@@ -185,6 +190,7 @@ const InvoiceForm = () => {
               dispatch_ref: "",
               invoice_sub_item_id: "",
               invoice_sub_godown_id: "",
+              invoice_sub_batch_no: "",
               invoice_sub_box: "",
               invoice_sub_piece: "",
               invoice_sub_rate: "",
@@ -220,6 +226,7 @@ const InvoiceForm = () => {
               ...updatedData[rowIndex],
               invoice_sub_item_id: sub.dispatch_sub_item_id ?? "",
               invoice_sub_godown_id: sub.dispatch_sub_godown_id ?? "",
+              invoice_sub_batch_no: sub.invoice_sub_batch_no ?? "",
               invoice_sub_box: box,
               invoice_sub_piece: piece,
               invoice_sub_rate: rate,
@@ -245,8 +252,18 @@ const InvoiceForm = () => {
         console.log("Invalid input. Only digits are allowed.");
         return;
       }
+      const numericFields = [
+        "invoice_sub_box",
+        "invoice_sub_piece",
+        "invoice_sub_rate",
+      ];
 
-      updatedData[rowIndex][fieldName] = Number(value);
+      if (numericFields.includes(fieldName)) {
+        updatedData[rowIndex][fieldName] = value === "" ? "" : Number(value);
+      } else {
+        updatedData[rowIndex][fieldName] = value;
+      }
+      // updatedData[rowIndex][fieldName] = Number(value);
 
       const box = Number(updatedData[rowIndex].invoice_sub_box ?? 0);
       const piece = Number(updatedData[rowIndex].invoice_sub_piece ?? 0);
@@ -287,6 +304,15 @@ const InvoiceForm = () => {
       if (!row.invoice_sub_amount)
         missingFields.push(`Row ${index + 1}: Amount`);
       if (!row.invoice_sub_rate) missingFields.push(`Row ${index + 1}: Rate`);
+      if (userbatch == "Yes") {
+        if (
+          row.invoice_sub_batch_no === null ||
+          row.invoice_sub_batch_no === undefined ||
+          row.invoice_sub_batch_no === ""
+        ) {
+          missingFields.push(`Row ${index + 1}: Batch No`);
+        }
+      }
       if (singlebranch == "Yes") {
         if (
           row.invoice_sub_box === null ||
@@ -599,6 +625,11 @@ const InvoiceForm = () => {
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Item<span className="text-red-500 ml-1">*</span>
                         </TableHead>
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
@@ -713,7 +744,27 @@ const InvoiceForm = () => {
                               )}
                             </div>
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.invoice_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "invoice_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           <TableCell className="px-4 py-3 min-w-[200px] align-top">
                             <div className="space-y-1">
                               <MemoizedProductSelect
@@ -1044,7 +1095,11 @@ const InvoiceForm = () => {
                             )}
                           </div>
                         </TableHead>
-
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3">
                           Godown
                           <span className="text-red-500 ml-1 text-xs">*</span>
@@ -1162,6 +1217,27 @@ const InvoiceForm = () => {
                               </button>
                             )}
                           </TableCell>
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.invoice_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "invoice_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Column */}
                           <TableCell className="px-4 py-3 align-top min-w-20">
                             <div className="flex flex-col gap-1">

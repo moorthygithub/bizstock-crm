@@ -76,6 +76,7 @@ function LoginAuth() {
           version: res?.data?.version?.version_panel,
           branch_d_unit: res?.data?.branch?.branch_d_unit,
           branch_s_unit: res?.data?.branch?.branch_s_unit,
+          branch_batch: res?.data?.branch?.branch_batch,
         };
         dispatch(loginSuccess(userData));
         navigate(window.innerWidth < 768 ? "/home" : "/stock-view");
@@ -83,12 +84,12 @@ function LoginAuth() {
         toast.error("Login Failed: Unexpected response.");
       }
     } catch (error) {
-      console.log(error?.response?.data?.error)
+      console.log(error?.response?.data?.error);
       toast({
         variant: "destructive",
         title: "Login Failed",
         description:
-        error?.response?.data?.error || "Please check your credentials.",
+          error?.response?.data?.error || "Please check your credentials.",
       });
     } finally {
       setIsLoading(false);
@@ -207,7 +208,6 @@ function LoginAuth() {
                   </motion.div>
 
                   <CardDescription className="flex justify-between mt-2">
-                 
                     <span
                       onClick={() => navigate("/signup")}
                       className="text-yellow-800 underline cursor-pointer"

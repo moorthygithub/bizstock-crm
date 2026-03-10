@@ -94,6 +94,7 @@ export const PAYMENT_FORM = `/payment`;
 //REPORT STOCK -BUYER
 export const BUYER_REPORT = `/report-buyer-data`;
 export const BUYER_DOWNLOAD = `/download-buyer-data`;
+export const STOCK_BATCH_REPORT = `/stock-batch`;
 export const STOCK_REPORT = `/stock`;
 export const STOCK_CATEGORY_REPORT = `/item-category-stock`;
 export const STOCK_GODOWN_REPORT = `/stock-godown`;
@@ -168,7 +169,7 @@ export const fetchInvoiceById = async (encryptedId, token) => {
     console.log(error, "error");
 
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -187,7 +188,7 @@ export const fetchPurchaseById = async (encryptedId, token) => {
     console.log(error, "error");
 
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -202,7 +203,7 @@ export const fetchPurchaseReturnById = async (encryptedId, token) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -220,7 +221,7 @@ export const fetchDispatchInvoiceById = async (id, token) => {
     console.log(error, "error");
 
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -238,7 +239,7 @@ export const fetchDispatchInvoiceSubById = async (id, token) => {
     console.log(error, "error");
 
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -255,7 +256,7 @@ export const fetchPreBookingById = async (encryptedId, token) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -272,7 +273,7 @@ export const fetchQuotationById = async (encryptedId, token) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -289,7 +290,7 @@ export const fetchDispatchById = async (encryptedId, token) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -306,7 +307,7 @@ export const fetchDispatchReturnById = async (encryptedId, token) => {
   } catch (error) {
     console.log(error);
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };
@@ -318,13 +319,13 @@ export const fetchAvaiableItem = async (itemid, godown, token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
     console.log(error);
     throw new Error(
-      error.response?.data?.message || "Failed to fetch purchase details"
+      error.response?.data?.message || "Failed to fetch purchase details",
     );
   }
 };

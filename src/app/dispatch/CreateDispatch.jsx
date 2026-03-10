@@ -71,6 +71,7 @@ const CreateDispatch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const singlebranch = useSelector((state) => state.auth.branch_s_unit);
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
+  const userbatch = useSelector((state) => state.auth?.branch_batch);
   const token = usetoken();
 
   const [formData, setFormData] = useState({
@@ -91,6 +92,7 @@ const CreateDispatch = () => {
       dispatch_sub_rate: "",
       dispatch_sub_box: 0,
       item_brand: "",
+      dispatch_sub_batch_no: "",
       item_size: "",
       dispatch_sub_piece: 0,
       stockData: {
@@ -110,6 +112,7 @@ const CreateDispatch = () => {
         dispatch_sub_rate: "",
         dispatch_sub_box: 0,
         dispatch_sub_piece: 0,
+        dispatch_sub_batch_no: "",
       },
     ]);
   }, []);
@@ -119,7 +122,7 @@ const CreateDispatch = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length]
+    [invoiceData.length],
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -155,6 +158,7 @@ const CreateDispatch = () => {
             item_size: sub.item_size || "",
             dispatch_sub_godown_id: sub.dispatch_sub_godown_id,
             dispatch_sub_rate: sub.dispatch_sub_rate,
+            dispatch_sub_batch_no: sub.dispatch_sub_batch_no,
           }))
         : [
             {
@@ -165,6 +169,7 @@ const CreateDispatch = () => {
               dispatch_sub_piece: "",
               dispatch_sub_godown_id: "",
               dispatch_sub_rate: "",
+              dispatch_sub_batch_no: "",
             },
           ];
 
@@ -245,7 +250,7 @@ const CreateDispatch = () => {
             index,
             dispatch_sub_item_id,
             dispatch_sub_godown_id,
-            [...invoiceData]
+            [...invoiceData],
           );
         }
       });
@@ -254,7 +259,7 @@ const CreateDispatch = () => {
     editId,
     invoiceData
       .map(
-        (row) => row?.dispatch_sub_item_id + "-" + row?.dispatch_sub_godown_id
+        (row) => row?.dispatch_sub_item_id + "-" + row?.dispatch_sub_godown_id,
       )
       .join(","),
   ]);
@@ -293,7 +298,7 @@ const CreateDispatch = () => {
       console.log(value, "value");
 
       const selectedBuyer = buyerData?.buyers.find(
-        (buyer) => buyer.id == value
+        (buyer) => buyer.id == value,
       );
       console.log(selectedBuyer, "selectedBuyer");
       if (selectedBuyer) {
@@ -321,6 +326,16 @@ const CreateDispatch = () => {
       if (!row.dispatch_sub_rate) missingFields.push(`Row ${index + 1}: Rate`);
       if (!row.dispatch_sub_item_id)
         missingFields.push(`Row ${index + 1}: Item`);
+
+      if (userbatch == "Yes") {
+        if (
+          row.dispatch_sub_batch_no === null ||
+          row.dispatch_sub_batch_no === undefined ||
+          row.dispatch_sub_batch_no === ""
+        ) {
+          missingFields.push(`Row ${index + 1}:Batch No`);
+        }
+      }
       if (singlebranch == "Yes") {
         if (
           row.dispatch_sub_box === null ||
@@ -417,7 +432,7 @@ const CreateDispatch = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -429,7 +444,7 @@ const CreateDispatch = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId)
+          prevData.filter((row) => row.id !== deleteItemId),
         );
       } else if (data.code === 400) {
         toast({
@@ -541,7 +556,7 @@ const CreateDispatch = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1")
+                          buyer.buyer_type?.split(",").includes("1"),
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -674,6 +689,11 @@ const CreateDispatch = () => {
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Item
                         </TableHead>
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
@@ -709,7 +729,7 @@ const CreateDispatch = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "dispatch_sub_item_id"
+                                    "dispatch_sub_item_id",
                                   )
                                 }
                                 options={
@@ -760,7 +780,27 @@ const CreateDispatch = () => {
                               </button>
                             )}
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.dispatch_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "dispatch_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Select */}
                           <TableCell className="px-4 py-3 min-w-[150px] align-top">
                             <div className="space-y-1">
@@ -770,7 +810,7 @@ const CreateDispatch = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "dispatch_sub_godown_id"
+                                    "dispatch_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -800,7 +840,7 @@ const CreateDispatch = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "dispatch_sub_rate"
+                                    "dispatch_sub_rate",
                                   )
                                 }
                                 placeholder="Rate"
@@ -821,7 +861,7 @@ const CreateDispatch = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_sub_box"
+                                      "dispatch_sub_box",
                                     )
                                   }
                                   placeholder="Qty"
@@ -849,7 +889,7 @@ const CreateDispatch = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_sub_piece"
+                                      "dispatch_sub_piece",
                                     )
                                   }
                                   placeholder="Piece"
@@ -960,7 +1000,7 @@ const CreateDispatch = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1")
+                            buyer.buyer_type?.split(",").includes("1"),
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1086,7 +1126,11 @@ const CreateDispatch = () => {
                             )}
                           </div>
                         </TableHead>
-
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3">
                           Godown
                           <span className="text-red-500 ml-1 text-xs">*</span>
@@ -1124,7 +1168,7 @@ const CreateDispatch = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "dispatch_sub_item_id"
+                                    "dispatch_sub_item_id",
                                   )
                                 }
                                 options={
@@ -1172,6 +1216,27 @@ const CreateDispatch = () => {
                             )}
                           </TableCell>
 
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.dispatch_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "dispatch_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Column */}
                           <TableCell className="px-4 py-3 align-top">
                             <div className="flex flex-col gap-1">
@@ -1181,7 +1246,7 @@ const CreateDispatch = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "dispatch_sub_godown_id"
+                                    "dispatch_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -1208,7 +1273,7 @@ const CreateDispatch = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "dispatch_sub_rate"
+                                    "dispatch_sub_rate",
                                   )
                                 }
                                 placeholder="Rate"
@@ -1226,7 +1291,7 @@ const CreateDispatch = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_sub_box"
+                                      "dispatch_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1254,7 +1319,7 @@ const CreateDispatch = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_sub_piece"
+                                      "dispatch_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"
