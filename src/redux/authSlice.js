@@ -11,6 +11,7 @@ const initialState = {
   whatsapp_number: null,
   branch_d_unit: null,
   branch_s_unit: null,
+  branch_batch: null,
 };
 
 const authSlice = createSlice({
@@ -28,6 +29,7 @@ const authSlice = createSlice({
       state.whatsapp_number = action.payload.whatsapp_number;
       state.branch_d_unit = action.payload.branch_d_unit;
       state.branch_s_unit = action.payload.branch_s_unit;
+      state.branch_batch = action.payload.branch_batch;
     },
     logout: () => {
       return initialState;

@@ -65,6 +65,7 @@ const CreatePurchaseReturn = () => {
   const singlebranch = useSelector((state) => state.auth.branch_s_unit);
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
   const userType = useSelector((state) => state.auth.user_type);
+  const userbatch = useSelector((state) => state.auth?.branch_batch);
   const editId = Boolean(id);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -88,6 +89,7 @@ const CreatePurchaseReturn = () => {
       id: editId ? "" : null,
       purchase_sub_item_id: "",
       purchase_sub_godown_id: "",
+      purchase_sub_batch_no: "",
       purchase_sub_box: 0,
       item_brand: "",
       item_size: "",
@@ -106,6 +108,7 @@ const CreatePurchaseReturn = () => {
       {
         purchase_sub_item_id: "",
         purchase_sub_godown_id: "",
+        purchase_sub_batch_no: "",
         purchase_sub_box: 0,
         purchase_sub_piece: 0,
       },
@@ -117,7 +120,7 @@ const CreatePurchaseReturn = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length]
+    [invoiceData.length],
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -160,6 +163,7 @@ const CreatePurchaseReturn = () => {
             purchase_sub_item: sub.item_name || "",
             purchase_sub_weight: sub.item_weight || "",
             purchase_sub_godown_id: sub.purchase_sub_godown_id,
+            purchase_sub_batch_no: sub.purchase_sub_batch_no,
           }))
         : [
             {
@@ -171,6 +175,7 @@ const CreatePurchaseReturn = () => {
               purchase_sub_item: "",
               purchase_sub_weight: "",
               purchase_sub_godown_id: "",
+              purchase_sub_batch_no: "",
             },
           ];
 
@@ -255,7 +260,7 @@ const CreatePurchaseReturn = () => {
   }, [
     invoiceData
       .map(
-        (row) => row?.purchase_sub_item_id + "-" + row?.purchase_sub_godown_id
+        (row) => row?.purchase_sub_item_id + "-" + row?.purchase_sub_godown_id,
       )
       .join(","),
   ]);
@@ -325,6 +330,15 @@ const CreatePurchaseReturn = () => {
           row.purchase_sub_piece === ""
         ) {
           missingFields.push(`Row ${index + 1}: Piece`);
+        }
+      }
+      if (userbatch == "Yes") {
+        if (
+          row.purchase_sub_batch_no === null ||
+          row.purchase_sub_batch_no === undefined ||
+          row.purchase_sub_batch_no === ""
+        ) {
+          missingFields.push(`Row ${index + 1}: Batch No`);
         }
       }
     });
@@ -405,7 +419,7 @@ const CreatePurchaseReturn = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;
@@ -417,7 +431,7 @@ const CreatePurchaseReturn = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId)
+          prevData.filter((row) => row.id !== deleteItemId),
         );
       } else if (data.code === 400) {
         toast({
@@ -531,7 +545,7 @@ const CreatePurchaseReturn = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1")
+                          buyer.buyer_type?.split(",").includes("1"),
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -650,6 +664,16 @@ const CreatePurchaseReturn = () => {
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Item
                         </TableHead>
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
@@ -682,7 +706,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_item_id"
+                                    "purchase_sub_item_id",
                                   )
                                 }
                                 options={
@@ -733,7 +757,69 @@ const CreatePurchaseReturn = () => {
                               </button>
                             )}
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.purchase_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "purchase_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.purchase_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "purchase_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.purchase_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "purchase_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Select */}
                           <TableCell className="px-4 py-3 min-w-[150px] align-top">
                             <div className="space-y-1">
@@ -743,7 +829,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_godown_id"
+                                    "purchase_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -778,7 +864,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_box"
+                                      "purchase_sub_box",
                                     )
                                   }
                                   placeholder="Qty"
@@ -807,7 +893,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_piece"
+                                      "purchase_sub_piece",
                                     )
                                   }
                                   placeholder="Piece"
@@ -928,7 +1014,7 @@ const CreatePurchaseReturn = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1")
+                            buyer.buyer_type?.split(",").includes("1"),
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1039,7 +1125,11 @@ const CreatePurchaseReturn = () => {
                             )}
                           </div>
                         </TableHead>
-
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3">
                           Godown
                           <span className="text-red-500 ml-1 text-xs">*</span>
@@ -1080,7 +1170,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_item_id"
+                                    "purchase_sub_item_id",
                                   )
                                 }
                                 options={
@@ -1126,7 +1216,27 @@ const CreatePurchaseReturn = () => {
                               </button>
                             )}
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.purchase_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "purchase_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Column */}
                           <TableCell className="px-4 py-3 align-top">
                             <div className="flex flex-col gap-1">
@@ -1136,7 +1246,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_godown_id"
+                                    "purchase_sub_godown_id",
                                   )
                                 }
                                 options={
@@ -1165,7 +1275,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_box"
+                                      "purchase_sub_box",
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1191,7 +1301,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_piece"
+                                      "purchase_sub_piece",
                                     )
                                   }
                                   placeholder="Enter Piece"

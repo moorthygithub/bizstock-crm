@@ -72,6 +72,7 @@ const QuotationForm = () => {
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
   const token = usetoken();
   const barcodeInputRefs = useRef([]);
+  const userbatch = useSelector((state) => state.auth?.branch_batch);
 
   const [formData, setFormData] = useState({
     quotation_date: today,
@@ -88,6 +89,7 @@ const QuotationForm = () => {
       quotation_sub_item_id: "",
       quotation_sub_godown_id: "",
       quotation_sub_rate: "",
+      quotation_sub_batch_no: "",
       quotation_sub_box: 0,
       item_brand: "",
       item_size: "",
@@ -107,6 +109,7 @@ const QuotationForm = () => {
       {
         quotation_sub_item_id: "",
         quotation_sub_godown_id: "",
+        quotation_sub_batch_no: "",
         quotation_sub_rate: "",
         quotation_sub_box: 0,
         quotation_sub_piece: 0,
@@ -153,6 +156,7 @@ const QuotationForm = () => {
             item_brand: sub.item_brand || "",
             item_size: sub.item_size || "",
             quotation_sub_godown_id: sub.quotation_sub_godown_id,
+            quotation_sub_batch_no: sub.quotation_sub_batch_no,
             quotation_sub_rate: sub.quotation_sub_rate,
           }))
         : [
@@ -163,6 +167,7 @@ const QuotationForm = () => {
               item_size: "",
               quotation_sub_piece: "",
               quotation_sub_godown_id: "",
+              quotation_sub_batch_no: "",
               quotation_sub_rate: "",
             },
           ];
@@ -338,6 +343,7 @@ const QuotationForm = () => {
             id: null,
             quotation_sub_item_id: "",
             quotation_sub_godown_id: "",
+            quotation_sub_batch_no: "",
             quotation_sub_rate: "",
             quotation_sub_box: 0,
             item_brand: "",
@@ -384,6 +390,15 @@ const QuotationForm = () => {
       if (!row.quotation_sub_rate) missingFields.push(`Row ${index + 1}: Rate`);
       if (!row.quotation_sub_item_id)
         missingFields.push(`Row ${index + 1}: Item`);
+      if (userbatch == "Yes") {
+        if (
+          row.quotation_sub_batch_no === null ||
+          row.quotation_sub_batch_no === undefined ||
+          row.quotation_sub_batch_no === ""
+        ) {
+          missingFields.push(`Row ${index + 1}: Batch No`);
+        }
+      }
       if (singlebranch == "Yes") {
         if (
           row.quotation_sub_box === null ||
@@ -718,6 +733,11 @@ const QuotationForm = () => {
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Item
                         </TableHead>
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
@@ -869,6 +889,27 @@ const QuotationForm = () => {
                               </button>
                             )}
                           </TableCell>
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.quotation_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "quotation_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Select */}
                           <TableCell className="px-4 py-3 min-w-[150px] align-top">
                             <div className="space-y-1">
@@ -1186,6 +1227,11 @@ const QuotationForm = () => {
                             )}
                           </div>
                         </TableHead>
+                        {userbatch == "Yes" && (
+                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
+                            Batch No<span className="text-red-500 ml-1">*</span>
+                          </TableHead>
+                        )}
                         <TableHead className="text-sm font-semibold text-gray-600 px-4 py-3">
                           Godown
                           <span className="text-red-500 ml-1 text-xs">*</span>
@@ -1337,7 +1383,27 @@ const QuotationForm = () => {
                               </button>
                             )}
                           </TableCell>
-
+                          {userbatch == "Yes" && (
+                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
+                              <div className="space-y-1">
+                                <Input
+                                  ref={(el) =>
+                                    (boxInputRefs.current[rowIndex] = el)
+                                  }
+                                  className="bg-white border border-gray-300 w-full text-xs"
+                                  value={row.quotation_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "quotation_sub_batch_no",
+                                    )
+                                  }
+                                  placeholder="Batch No"
+                                />
+                              </div>
+                            </TableCell>
+                          )}
                           {/* Godown Column */}
                           <TableCell className="px-4 py-3 align-top">
                             <div className="flex flex-col gap-1">

@@ -49,6 +49,7 @@ import PaymentSummaryReport from "@/app/report/PaymentSummaryReport";
 import PaymentLedgerReport from "@/app/report/PaymentLedgerReport";
 import PaymentList from "@/app/payment/PaymentList";
 import Signup from "@/app/auth/Signup";
+import StockBatchView from "@/app/stockbatch/stock-batch";
 
 function AppRoutes() {
   return (
@@ -69,6 +70,7 @@ function AppRoutes() {
           <Route path="/master/branch" element={<BranchList />} />
           <Route path="/master/team" element={<TeamList />} />
           <Route path="/master/go-down" element={<GoDownList />} />
+          <Route path="/stock-batch-view" element={<StockBatchView />} />
           <Route path="/stock-view" element={<StockView />} />
           <Route path="/purchase" element={<PurchaseList />} />
           <Route path="/purchase/create" element={<CreatePurchase />} />

@@ -27,6 +27,7 @@ export function AppSidebar({ ...props }) {
   const nameL = useSelector((state) => state.auth.name);
   const emailL = useSelector((state) => state.auth.email);
   const id = useSelector((state) => state.auth.user_type);
+  const userbatch = useSelector((state) => state.auth?.branch_batch);
   const initialData = {
     user: {
       name: `${nameL}`,
@@ -180,6 +181,14 @@ export function AppSidebar({ ...props }) {
             title: "Stock View",
             url: "/stock-view",
           },
+          ...(userbatch === "Yes"
+            ? [
+                {
+                  title: "Stock Batch View",
+                  url: "/stock-batch-view",
+                },
+              ]
+            : []),
           {
             title: "Category Stock",
             url: "/report/category-stock",
