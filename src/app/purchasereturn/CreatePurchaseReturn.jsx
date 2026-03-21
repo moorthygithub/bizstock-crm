@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ButtonConfig } from "@/config/ButtonConfig";
 import { useToast } from "@/hooks/use-toast";
 import {
+  fetchBatchNoByItem,
   useFetchBuyers,
   useFetchGoDown,
   useFetchItems,
@@ -72,6 +73,7 @@ const CreatePurchaseReturn = () => {
   const boxInputRefs = useRef([]);
   const today = moment().format("YYYY-MM-DD");
   const [isLoading, setIsLoading] = useState(false);
+  const [batchOptions, setBatchOptions] = useState({});
 
   const token = usetoken();
 
@@ -120,7 +122,7 @@ const CreatePurchaseReturn = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length],
+    [invoiceData.length]
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -260,11 +262,11 @@ const CreatePurchaseReturn = () => {
   }, [
     invoiceData
       .map(
-        (row) => row?.purchase_sub_item_id + "-" + row?.purchase_sub_godown_id,
+        (row) => row?.purchase_sub_item_id + "-" + row?.purchase_sub_godown_id
       )
       .join(","),
   ]);
-  const handlePaymentChange = (selectedValue, rowIndex, fieldName) => {
+  const handlePaymentChange = async (selectedValue, rowIndex, fieldName) => {
     let value = selectedValue?.target?.value ?? selectedValue;
     const updatedData = [...invoiceData];
 
@@ -274,6 +276,27 @@ const CreatePurchaseReturn = () => {
       if (selectedItem) {
         updatedData[rowIndex]["item_size"] = selectedItem.item_size;
         updatedData[rowIndex]["item_brand"] = selectedItem.item_brand;
+      }
+
+      try {
+        const res = await fetchBatchNoByItem(value, token);
+
+        const batches =
+          res?.batchNo?.map((batch) => ({
+            value: batch.purchase_sub_batch_no,
+            label: batch.purchase_sub_batch_no,
+          })) || [];
+
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: batches,
+        }));
+      } catch (err) {
+        console.error("Batch fetch error:", err);
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: [],
+        }));
       }
       focusBoxInput(rowIndex);
     } else {
@@ -419,7 +442,7 @@ const CreatePurchaseReturn = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = response.data;
@@ -431,7 +454,7 @@ const CreatePurchaseReturn = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId),
+          prevData.filter((row) => row.id !== deleteItemId)
         );
       } else if (data.code === 400) {
         toast({
@@ -545,7 +568,7 @@ const CreatePurchaseReturn = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1"),
+                          buyer.buyer_type?.split(",").includes("1")
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -669,11 +692,7 @@ const CreatePurchaseReturn = () => {
                             Batch No<span className="text-red-500 ml-1">*</span>
                           </TableHead>
                         )}
-                        {userbatch == "Yes" && (
-                          <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
-                            Batch No<span className="text-red-500 ml-1">*</span>
-                          </TableHead>
-                        )}
+
                         <TableHead className="text-xs font-semibold text-gray-700 py-3 px-4">
                           Godown<span className="text-red-500 ml-1">*</span>
                         </TableHead>
@@ -706,7 +725,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_item_id",
+                                    "purchase_sub_item_id"
                                   )
                                 }
                                 options={
@@ -760,66 +779,27 @@ const CreatePurchaseReturn = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
-                                  ref={(el) =>
-                                    (boxInputRefs.current[rowIndex] = el)
-                                  }
-                                  className="bg-white border border-gray-300 w-full text-xs"
+                                <MemoizedProductSelect
                                   value={row.purchase_sub_batch_no}
                                   onChange={(e) =>
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_batch_no",
+                                      "purchase_sub_batch_no"
                                     )
                                   }
-                                  placeholder="Batch No"
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch : {row.purchase_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
-                          {userbatch == "Yes" && (
-                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
-                              <div className="space-y-1">
-                                <Input
-                                  ref={(el) =>
-                                    (boxInputRefs.current[rowIndex] = el)
-                                  }
-                                  className="bg-white border border-gray-300 w-full text-xs"
-                                  value={row.purchase_sub_batch_no}
-                                  onChange={(e) =>
-                                    handlePaymentChange(
-                                      e,
-                                      rowIndex,
-                                      "purchase_sub_batch_no",
-                                    )
-                                  }
-                                  placeholder="Batch No"
-                                />
-                              </div>
-                            </TableCell>
-                          )}
-                          {userbatch == "Yes" && (
-                            <TableCell className="px-4 py-3 min-w-[150px] align-top">
-                              <div className="space-y-1">
-                                <Input
-                                  ref={(el) =>
-                                    (boxInputRefs.current[rowIndex] = el)
-                                  }
-                                  className="bg-white border border-gray-300 w-full text-xs"
-                                  value={row.purchase_sub_batch_no}
-                                  onChange={(e) =>
-                                    handlePaymentChange(
-                                      e,
-                                      rowIndex,
-                                      "purchase_sub_batch_no",
-                                    )
-                                  }
-                                  placeholder="Batch No"
-                                />
-                              </div>
-                            </TableCell>
-                          )}
+
                           {/* Godown Select */}
                           <TableCell className="px-4 py-3 min-w-[150px] align-top">
                             <div className="space-y-1">
@@ -829,7 +809,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_godown_id",
+                                    "purchase_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -864,7 +844,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_box",
+                                      "purchase_sub_box"
                                     )
                                   }
                                   placeholder="Qty"
@@ -893,7 +873,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_piece",
+                                      "purchase_sub_piece"
                                     )
                                   }
                                   placeholder="Piece"
@@ -1014,7 +994,7 @@ const CreatePurchaseReturn = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1"),
+                            buyer.buyer_type?.split(",").includes("1")
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1170,7 +1150,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_item_id",
+                                    "purchase_sub_item_id"
                                   )
                                 }
                                 options={
@@ -1219,21 +1199,23 @@ const CreatePurchaseReturn = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
-                                  ref={(el) =>
-                                    (boxInputRefs.current[rowIndex] = el)
-                                  }
-                                  className="bg-white border border-gray-300 w-full text-xs"
+                                <MemoizedProductSelect
                                   value={row.purchase_sub_batch_no}
                                   onChange={(e) =>
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_batch_no",
+                                      "purchase_sub_batch_no"
                                     )
                                   }
-                                  placeholder="Batch No"
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch : {row.purchase_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -1246,7 +1228,7 @@ const CreatePurchaseReturn = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "purchase_sub_godown_id",
+                                    "purchase_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -1275,7 +1257,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_box",
+                                      "purchase_sub_box"
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1301,7 +1283,7 @@ const CreatePurchaseReturn = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "purchase_sub_piece",
+                                      "purchase_sub_piece"
                                     )
                                   }
                                   placeholder="Enter Piece"

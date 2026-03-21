@@ -67,3 +67,11 @@ export const useFetchDispatchReturnRef = () => {
     createQueryConfig(["dispatchreturnref"], "/dispatch-return-ref")
   );
 };
+export const fetchBatchNoByItem = async (itemId, token) => {
+  const response = await apiClient.get(`/purchases-batchno/${itemId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

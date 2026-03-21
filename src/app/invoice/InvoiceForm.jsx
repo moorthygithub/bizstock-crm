@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ButtonConfig } from "@/config/ButtonConfig";
 import { useToast } from "@/hooks/use-toast";
 import {
+  fetchBatchNoByItem,
   useFetchBuyers,
   useFetchGoDown,
   useFetchInvoiceRef,
@@ -63,7 +64,6 @@ const InvoiceForm = () => {
   const [deleteItemId, setDeleteItemId] = useState(null);
   const singlebranch = useSelector((state) => state.auth.branch_s_unit);
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
-  console.log(singlebranch, doublebranch);
   const userType = useSelector((state) => state.auth.user_type);
   const editId = Boolean(id);
   const { toast } = useToast();
@@ -71,6 +71,7 @@ const InvoiceForm = () => {
   const boxInputRefs = useRef([]);
   const [isLoading, setIsLoading] = useState(false);
   const userbatch = useSelector((state) => state.auth?.branch_batch);
+  const [batchOptions, setBatchOptions] = useState({});
 
   const token = usetoken();
 
@@ -242,10 +243,31 @@ const InvoiceForm = () => {
       }
 
       focusBoxInput(rowIndex);
+    } else if (fieldName == "invoice_sub_item_id") {
+      try {
+        const res = await fetchBatchNoByItem(value, token);
+
+        const batches =
+          res?.batchNo?.map((batch) => ({
+            value: batch.purchase_sub_batch_no,
+            label: batch.purchase_sub_batch_no,
+          })) || [];
+
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: batches,
+        }));
+      } catch (err) {
+        console.error("Batch fetch error:", err);
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: [],
+        }));
+      }
     } else {
       if (
         ["invoice_sub_box", "invoice_sub_piece", "invoice_sub_rate"].includes(
-          fieldName,
+          fieldName
         ) &&
         !/^\d*$/.test(value)
       ) {
@@ -407,7 +429,7 @@ const InvoiceForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = response.data;
@@ -419,7 +441,7 @@ const InvoiceForm = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId),
+          prevData.filter((row) => row.id !== deleteItemId)
         );
       } else if (data.code === 400) {
         toast({
@@ -523,7 +545,7 @@ const InvoiceForm = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1"),
+                          buyer.buyer_type?.split(",").includes("1")
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -671,7 +693,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_ref",
+                                      "dispatch_ref"
                                     )
                                   }
                                   options={
@@ -679,7 +701,7 @@ const InvoiceForm = () => {
                                       (ref) => ({
                                         value: ref.dispatch_ref,
                                         label: ref.dispatch_ref,
-                                      }),
+                                      })
                                     ) || []
                                   }
                                   placeholder="Select Ref"
@@ -723,7 +745,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_item_id",
+                                    "invoice_sub_item_id"
                                   )
                                 }
                                 options={
@@ -747,7 +769,7 @@ const InvoiceForm = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
+                                {/* <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -757,11 +779,28 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_batch_no",
+                                      "invoice_sub_batch_no"
                                     )
                                   }
                                   placeholder="Batch No"
+                                /> */}
+                                <MemoizedProductSelect
+                                  value={row.invoice_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "invoice_sub_batch_no"
+                                    )
+                                  }
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch : {row.invoice_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -773,7 +812,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_godown_id",
+                                    "invoice_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -808,7 +847,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_box",
+                                      "invoice_sub_box"
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -835,7 +874,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_piece",
+                                      "invoice_sub_piece"
                                     )
                                   }
                                   placeholder="Enter Piece"
@@ -861,7 +900,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_rate",
+                                    "invoice_sub_rate"
                                   )
                                 }
                                 placeholder="Enter Rate"
@@ -976,7 +1015,7 @@ const InvoiceForm = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1"),
+                            buyer.buyer_type?.split(",").includes("1")
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1146,7 +1185,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "dispatch_ref",
+                                      "dispatch_ref"
                                     )
                                   }
                                   options={
@@ -1154,7 +1193,7 @@ const InvoiceForm = () => {
                                       (ref) => ({
                                         value: ref.dispatch_ref,
                                         label: ref.dispatch_ref,
-                                      }),
+                                      })
                                     ) || []
                                   }
                                   placeholder="Select Ref"
@@ -1170,7 +1209,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_item_id",
+                                    "invoice_sub_item_id"
                                   )
                                 }
                                 options={
@@ -1220,7 +1259,7 @@ const InvoiceForm = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
+                                {/* <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -1230,11 +1269,28 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_batch_no",
+                                      "invoice_sub_batch_no"
                                     )
                                   }
                                   placeholder="Batch No"
+                                /> */}
+                                <MemoizedProductSelect
+                                  value={row.invoice_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "invoice_sub_batch_no"
+                                    )
+                                  }
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch : {row.invoice_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -1247,7 +1303,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_godown_id",
+                                    "invoice_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -1275,7 +1331,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_box",
+                                      "invoice_sub_box"
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1301,7 +1357,7 @@ const InvoiceForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "invoice_sub_piece",
+                                      "invoice_sub_piece"
                                     )
                                   }
                                   placeholder="Enter Piece"
@@ -1327,7 +1383,7 @@ const InvoiceForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "invoice_sub_rate",
+                                    "invoice_sub_rate"
                                   )
                                 }
                                 placeholder="Enter Rate"

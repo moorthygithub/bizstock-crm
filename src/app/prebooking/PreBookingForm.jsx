@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ButtonConfig } from "@/config/ButtonConfig";
 import { useToast } from "@/hooks/use-toast";
 import {
+  fetchBatchNoByItem,
   useFetchBuyers,
   useFetchGoDown,
   useFetchItems,
@@ -72,6 +73,7 @@ const PreBookingForm = () => {
   const doublebranch = useSelector((state) => state.auth.branch_d_unit);
   const userbatch = useSelector((state) => state.auth?.branch_batch);
   const token = usetoken();
+  const [batchOptions, setBatchOptions] = useState({});
 
   const [formData, setFormData] = useState({
     pre_booking_date: today,
@@ -119,7 +121,7 @@ const PreBookingForm = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length],
+    [invoiceData.length]
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -248,7 +250,7 @@ const PreBookingForm = () => {
             index,
             pre_booking_sub_item_id,
             pre_booking_sub_godown_id,
-            [...invoiceData],
+            [...invoiceData]
           );
         }
       });
@@ -258,11 +260,11 @@ const PreBookingForm = () => {
     invoiceData
       .map(
         (row) =>
-          row?.pre_booking_sub_item_id + "-" + row?.pre_booking_sub_godown_id,
+          row?.pre_booking_sub_item_id + "-" + row?.pre_booking_sub_godown_id
       )
       .join(","),
   ]);
-  const handlePaymentChange = (selectedValue, rowIndex, fieldName) => {
+  const handlePaymentChange = async (selectedValue, rowIndex, fieldName) => {
     let value = selectedValue?.target?.value ?? selectedValue;
     const updatedData = [...invoiceData];
 
@@ -272,6 +274,26 @@ const PreBookingForm = () => {
       if (selectedItem) {
         updatedData[rowIndex]["item_size"] = selectedItem.item_size;
         updatedData[rowIndex]["item_brand"] = selectedItem.item_brand;
+      }
+      try {
+        const res = await fetchBatchNoByItem(value, token);
+
+        const batches =
+          res?.batchNo?.map((batch) => ({
+            value: batch.purchase_sub_batch_no,
+            label: batch.purchase_sub_batch_no,
+          })) || [];
+
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: batches,
+        }));
+      } catch (err) {
+        console.error("Batch fetch error:", err);
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: [],
+        }));
       }
       focusBoxInput(rowIndex);
     } else {
@@ -296,7 +318,7 @@ const PreBookingForm = () => {
       console.log(value, "value");
 
       const selectedBuyer = buyerData?.buyers.find(
-        (buyer) => buyer.id == value,
+        (buyer) => buyer.id == value
       );
       console.log(selectedBuyer, "selectedBuyer");
       if (selectedBuyer) {
@@ -428,7 +450,7 @@ const PreBookingForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = response.data;
@@ -440,7 +462,7 @@ const PreBookingForm = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId),
+          prevData.filter((row) => row.id !== deleteItemId)
         );
       } else if (data.code === 400) {
         toast({
@@ -554,7 +576,7 @@ const PreBookingForm = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1"),
+                          buyer.buyer_type?.split(",").includes("1")
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -726,7 +748,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_item_id",
+                                    "pre_booking_sub_item_id"
                                   )
                                 }
                                 options={
@@ -780,7 +802,7 @@ const PreBookingForm = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
+                                {/* <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -790,11 +812,29 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_batch_no",
+                                      "pre_booking_sub_batch_no"
                                     )
                                   }
                                   placeholder="Batch No"
+                                /> */}
+                                <MemoizedProductSelect
+                                  value={row.pre_booking_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "pre_booking_sub_batch_no"
+                                    )
+                                  }
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch :{" "}
+                                    {row.pre_booking_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -807,7 +847,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_godown_id",
+                                    "pre_booking_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -842,7 +882,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_box",
+                                      "pre_booking_sub_box"
                                     )
                                   }
                                   placeholder="Qty"
@@ -870,7 +910,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_piece",
+                                      "pre_booking_sub_piece"
                                     )
                                   }
                                   placeholder="Piece"
@@ -983,7 +1023,7 @@ const PreBookingForm = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1"),
+                            buyer.buyer_type?.split(",").includes("1")
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1153,7 +1193,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_item_id",
+                                    "pre_booking_sub_item_id"
                                   )
                                 }
                                 options={
@@ -1203,7 +1243,7 @@ const PreBookingForm = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
+                                {/* <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -1213,11 +1253,29 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_batch_no",
+                                      "pre_booking_sub_batch_no"
                                     )
                                   }
                                   placeholder="Batch No"
+                                /> */}
+                                <MemoizedProductSelect
+                                  value={row.pre_booking_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "pre_booking_sub_batch_no"
+                                    )
+                                  }
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch :{" "}
+                                    {row.pre_booking_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -1230,7 +1288,7 @@ const PreBookingForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "pre_booking_sub_godown_id",
+                                    "pre_booking_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -1259,7 +1317,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_box",
+                                      "pre_booking_sub_box"
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1287,7 +1345,7 @@ const PreBookingForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "pre_booking_sub_piece",
+                                      "pre_booking_sub_piece"
                                     )
                                   }
                                   placeholder="Enter Piece"
