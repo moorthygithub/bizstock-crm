@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ButtonConfig } from "@/config/ButtonConfig";
 import { useToast } from "@/hooks/use-toast";
 import {
+  fetchBatchNoByItem,
   useFetchBuyers,
   useFetchGoDown,
   useFetchItems,
@@ -73,6 +74,7 @@ const QuotationForm = () => {
   const token = usetoken();
   const barcodeInputRefs = useRef([]);
   const userbatch = useSelector((state) => state.auth?.branch_batch);
+  const [batchOptions, setBatchOptions] = useState({});
 
   const [formData, setFormData] = useState({
     quotation_date: today,
@@ -122,7 +124,7 @@ const QuotationForm = () => {
         setInvoiceData((prev) => prev.filter((_, i) => i !== index));
       }
     },
-    [invoiceData.length],
+    [invoiceData.length]
   );
   const focusBoxInput = (rowIndex) => {
     if (boxInputRefs.current[rowIndex]) {
@@ -249,7 +251,7 @@ const QuotationForm = () => {
             index,
             quotation_sub_item_id,
             quotation_sub_godown_id,
-            [...invoiceData],
+            [...invoiceData]
           );
         }
       });
@@ -258,12 +260,11 @@ const QuotationForm = () => {
     editId,
     invoiceData
       .map(
-        (row) =>
-          row?.quotation_sub_item_id + "-" + row?.quotation_sub_godown_id,
+        (row) => row?.quotation_sub_item_id + "-" + row?.quotation_sub_godown_id
       )
       .join(","),
   ]);
-  const handlePaymentChange = (selectedValue, rowIndex, fieldName) => {
+  const handlePaymentChange = async (selectedValue, rowIndex, fieldName) => {
     let value = selectedValue?.target?.value ?? selectedValue;
     const updatedData = [...invoiceData];
 
@@ -273,6 +274,26 @@ const QuotationForm = () => {
       if (selectedItem) {
         updatedData[rowIndex]["item_size"] = selectedItem.item_size;
         updatedData[rowIndex]["item_brand"] = selectedItem.item_brand;
+      }
+      try {
+        const res = await fetchBatchNoByItem(value, token);
+
+        const batches =
+          res?.batchNo?.map((batch) => ({
+            value: batch.purchase_sub_batch_no,
+            label: batch.purchase_sub_batch_no,
+          })) || [];
+
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: batches,
+        }));
+      } catch (err) {
+        console.error("Batch fetch error:", err);
+        setBatchOptions((prev) => ({
+          ...prev,
+          [rowIndex]: [],
+        }));
       }
       focusBoxInput(rowIndex);
     } else {
@@ -297,7 +318,7 @@ const QuotationForm = () => {
       console.log(value, "value");
 
       const selectedBuyer = buyerData?.buyers.find(
-        (buyer) => buyer.id == value,
+        (buyer) => buyer.id == value
       );
       //   if (selectedBuyer) {
       //     updatedFormData.dispatch_buyer_city = selectedBuyer.buyer_city;
@@ -315,7 +336,7 @@ const QuotationForm = () => {
   const CheckBarcode = (value, rowIndex, callback) => {
     if (value.length !== 6) return;
     const foundItem = itemsData?.items?.find(
-      (item) => item.item_barcode === value,
+      (item) => item.item_barcode === value
     );
 
     if (foundItem) {
@@ -493,7 +514,7 @@ const QuotationForm = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = response.data;
@@ -505,7 +526,7 @@ const QuotationForm = () => {
         });
 
         setInvoiceData((prevData) =>
-          prevData.filter((row) => row.id !== deleteItemId),
+          prevData.filter((row) => row.id !== deleteItemId)
         );
       } else if (data.code === 400) {
         toast({
@@ -609,7 +630,7 @@ const QuotationForm = () => {
                     options={
                       buyerData?.buyers
                         ?.filter((buyer) =>
-                          buyer.buyer_type?.split(",").includes("1"),
+                          buyer.buyer_type?.split(",").includes("1")
                         )
                         .map((buyer) => ({
                           value: buyer.id,
@@ -838,7 +859,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_item_id",
+                                    "quotation_sub_item_id"
                                   )
                                 }
                                 options={
@@ -892,7 +913,7 @@ const QuotationForm = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
+                                {/* <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -902,11 +923,29 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_batch_no",
+                                      "quotation_sub_batch_no"
                                     )
                                   }
                                   placeholder="Batch No"
+                                /> */}
+                                <MemoizedProductSelect
+                                  value={row.quotation_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "quotation_sub_batch_no"
+                                    )
+                                  }
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch :{" "}
+                                    {row.quotation_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -919,7 +958,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_godown_id",
+                                    "quotation_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -949,7 +988,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_rate",
+                                    "quotation_sub_rate"
                                   )
                                 }
                                 placeholder="Rate"
@@ -969,7 +1008,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_box",
+                                      "quotation_sub_box"
                                     )
                                   }
                                   placeholder="Qty"
@@ -996,7 +1035,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_piece",
+                                      "quotation_sub_piece"
                                     )
                                   }
                                   placeholder="Piece"
@@ -1112,7 +1151,7 @@ const QuotationForm = () => {
                       options={
                         buyerData?.buyers
                           ?.filter((buyer) =>
-                            buyer.buyer_type?.split(",").includes("1"),
+                            buyer.buyer_type?.split(",").includes("1")
                           )
                           .map((buyer) => ({
                             value: buyer.id,
@@ -1336,7 +1375,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_item_id",
+                                    "quotation_sub_item_id"
                                   )
                                 }
                                 options={
@@ -1386,7 +1425,7 @@ const QuotationForm = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                <Input
+                                {/* <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -1396,11 +1435,29 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_batch_no",
+                                      "quotation_sub_batch_no"
                                     )
                                   }
                                   placeholder="Batch No"
+                                /> */}
+                                <MemoizedProductSelect
+                                  value={row.quotation_sub_batch_no}
+                                  onChange={(e) =>
+                                    handlePaymentChange(
+                                      e,
+                                      rowIndex,
+                                      "quotation_sub_batch_no"
+                                    )
+                                  }
+                                  options={batchOptions[rowIndex] || []}
+                                  placeholder="Select Batch"
                                 />
+                                {editId && (
+                                  <span>
+                                    Selected Batch :{" "}
+                                    {row.quotation_sub_batch_no}
+                                  </span>
+                                )}
                               </div>
                             </TableCell>
                           )}
@@ -1413,7 +1470,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_godown_id",
+                                    "quotation_sub_godown_id"
                                   )
                                 }
                                 options={
@@ -1440,7 +1497,7 @@ const QuotationForm = () => {
                                   handlePaymentChange(
                                     e,
                                     rowIndex,
-                                    "quotation_sub_rate",
+                                    "quotation_sub_rate"
                                   )
                                 }
                                 placeholder="Rate"
@@ -1458,7 +1515,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_box",
+                                      "quotation_sub_box"
                                     )
                                   }
                                   placeholder="Enter Box"
@@ -1486,7 +1543,7 @@ const QuotationForm = () => {
                                     handlePaymentChange(
                                       e,
                                       rowIndex,
-                                      "quotation_sub_piece",
+                                      "quotation_sub_piece"
                                     )
                                   }
                                   placeholder="Enter Piece"
