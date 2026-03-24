@@ -779,7 +779,7 @@ const CreatePurchase = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                {/* <Input
+                                <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -793,9 +793,9 @@ const CreatePurchase = () => {
                                     )
                                   }
                                   placeholder="Batch No"
-                                /> */}
+                                />
 
-                                <MemoizedProductSelect
+                                {/* <MemoizedProductSelect
                                   value={row.purchase_sub_batch_no}
                                   onChange={(e) =>
                                     handlePaymentChange(
@@ -811,7 +811,7 @@ const CreatePurchase = () => {
                                   <span>
                                     Selected Batch : {row.purchase_sub_batch_no}
                                   </span>
-                                )}
+                                )} */}
                               </div>
                             </TableCell>
                           )}
@@ -1213,7 +1213,7 @@ const CreatePurchase = () => {
                           {userbatch == "Yes" && (
                             <TableCell className="px-4 py-3 min-w-[150px] align-top">
                               <div className="space-y-1">
-                                {/* <Input
+                                <Input
                                   ref={(el) =>
                                     (boxInputRefs.current[rowIndex] = el)
                                   }
@@ -1227,8 +1227,8 @@ const CreatePurchase = () => {
                                     )
                                   }
                                   placeholder="Batch No"
-                                /> */}
-                                <MemoizedProductSelect
+                                />
+                                {/* <MemoizedProductSelect
                                   value={row.purchase_sub_batch_no}
                                   onChange={(e) =>
                                     handlePaymentChange(
@@ -1244,7 +1244,7 @@ const CreatePurchase = () => {
                                   <span>
                                     Selected Batch : {row.purchase_sub_batch_no}
                                   </span>
-                                )}
+                                )} */}
                               </div>
                             </TableCell>
                           )}
